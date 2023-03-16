@@ -1,16 +1,13 @@
-# meal_client
+<h1>Biblioteca MealClient</h1>
+A biblioteca MealClient é uma ferramenta para gerenciar o tráfego HTTP e ler e escrever em um banco de dados. Ela é projetada para ajudar os desenvolvedores a criar aplicativos web escaláveis e com alta disponibilidade e inversão de controle.
 
-A new Flutter project.
+Instalação
+Para instalar a biblioteca MealClient, adicione a seguinte dependência no arquivo pubspec.yaml do seu projeto:
 
-## Getting Started
+dependencies:</br>
+&nbsp;&nbsp;meal_client:</br>
+&nbsp;&nbsp;&nbsp;&nbsp;git:</br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;url: https://github.com/tekboxs/meal_client</br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;ref: main</br>
 
-This project is a starting point for a Flutter application.
-
-A few resources to get you started if this is your first Flutter project:
-
-- [Lab: Write your first Flutter app](https://docs.flutter.dev/get-started/codelab)
-- [Cookbook: Useful Flutter samples](https://docs.flutter.dev/cookbook)
-
-For help getting started with Flutter development, view the
-[online documentation](https://docs.flutter.dev/), which offers tutorials,
-samples, guidance on mobile development, and a full API reference.
+<h3>Para utilização consulte: /test/client_test.dart</h3>
