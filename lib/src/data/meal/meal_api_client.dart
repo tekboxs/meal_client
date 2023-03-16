@@ -7,23 +7,33 @@ import '../../domain/meal/i_meal_client.dart';
 import '../../domain/meal/i_meal_db_adpter.dart';
 import 'meal_uno_initializer.dart';
 
+enum MealClientError { notFound, invalidResponse }
+
 class MealUnoApiClient implements IMealClient {
   final MealUnoInitializer initializer;
   IMealDBAdpter adapter = MealClientDBAdapter();
 
   MealUnoApiClient({required this.initializer});
 
-  _defaultSelection(Response response, String defaultKeySelector) {
-    if (response.data is Map) {
+  _defaultSelection(Response? response, String defaultKeySelector,
+      {cacheData}) {
+    if (response != null && response.data is Map) {
       if ((response.data as Map).containsKey(defaultKeySelector)) {
         return response.data[defaultKeySelector];
       }
     }
+
+    if (cacheData != null && cacheData is Map) {
+      if (cacheData.containsKey(defaultKeySelector)) {
+        return cacheData[defaultKeySelector];
+      }
+    }
     debugPrint(">>default key not found");
-    return response.data;
+    return response?.data ?? cacheData ?? MealClientError.invalidResponse;
   }
 
   _cacheHandle(url) async {
+    if (url == null) return;
     final data = await adapter.read(Uri.parse(url), ignoreCache: false);
 
     if (data is! MealDataBaseError) {
@@ -50,23 +60,29 @@ class MealUnoApiClient implements IMealClient {
         return cachedData;
       }
     }
+    try {
+      final response = await retry(
+        () => initializer().get(
+          url,
+          responseType: responseType ?? ResponseType.json,
+          headers: headers ?? {},
+          timeout: const Duration(seconds: 5),
+        ),
+        maxAttempts: 3,
+      );
 
-    // HTTP request
-    final response = await retry(
-      () => initializer()
-          .get(
-            url,
-            responseType: responseType ?? ResponseType.json,
-            headers: headers ?? {},
-          )
-          .timeout(const Duration(seconds: 5)),
-    );
-
-    // Response handling
-    if (defaultKeySelector.isNotEmpty) {
-      return _defaultSelection(response, defaultKeySelector);
-    } else {
-      return response.data;
+      // Response handling
+      if (defaultKeySelector.isNotEmpty) {
+        return _defaultSelection(response, defaultKeySelector);
+      } else {
+        return response.data;
+      }
+    } catch (e) {
+      final cachedData = await _cacheHandle(initializer.baseUrl + url);
+      if (cachedData != null && cachedData is! MealDataBaseError) {
+        return cachedData;
+      }
+      return MealClientError.notFound;
     }
   }
 

@@ -141,13 +141,6 @@ packages:
       relative: false
     source: path
     version: "0.0.0"
-  equatable:
-    dependency: "direct main"
-    description:
-      name: equatable
-      url: "https://pub.dartlang.org"
-    source: hosted
-    version: "2.0.5"
   fake_async:
     dependency: transitive
     description:
@@ -223,20 +216,6 @@ packages:
     description: flutter
     source: sdk
     version: "0.0.0"
-  flutter_downloader:
-    dependency: "direct main"
-    description:
-      name: flutter_downloader
-      url: "https://pub.dartlang.org"
-    source: hosted
-    version: "1.10.2"
-  flutter_isolate:
-    dependency: "direct main"
-    description:
-      name: flutter_isolate
-      url: "https://pub.dartlang.org"
-    source: hosted
-    version: "2.0.4"
   flutter_lints:
     dependency: "direct dev"
     description:
@@ -567,13 +546,6 @@ packages:
       url: "https://pub.dartlang.org"
     source: hosted
     version: "1.1.4"
-  uuid:
-    dependency: transitive
-    description:
-      name: uuid
-      url: "https://pub.dartlang.org"
-    source: hosted
-    version: "3.0.7"
   vector_math:
     dependency: transitive
     description:

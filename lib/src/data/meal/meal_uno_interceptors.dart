@@ -9,8 +9,8 @@ class MealUnoInterceptors {
   MealUnoInterceptors({required this.authenticator});
 
   onResponse(Response response) {
-    if (response.request.method == 'GET') {
-      //save on hive in different thread
+    if (response.request.method == 'get') {
+      //save on database in different thread
       adapter.save(response.request.uri, response.data);
     }
     return response;

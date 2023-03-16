@@ -25,6 +25,15 @@ class MealClientRepository {
   getProductsWithCache() async {
     return await _client.getMethod('/estoque/produto', enableCache: true);
   }
+
+  getProductFromCacheOnError() async {
+    await _client.getMethod('/estoque/produto');
+    debugPrint(">>request done, executing error");
+    return await _client.getMethod(
+      '/estoque/produto',
+      headers: {'bolo': 'fuba'},
+    );
+  }
 }
 
 void main() async {
@@ -53,7 +62,7 @@ void main() async {
       MealUnoApiClient(initializer: initializer),
     );
     final result = await repo.getProducts();
-    debugPrint(">>$result");
+    debugPrint(">>t1 res: ${result.toString().substring(0, 20)}");
     expect(result, isList);
   });
 
@@ -63,6 +72,19 @@ void main() async {
     );
     final result = await repo.getProductsWithCache();
 
-    print(result);
+    debugPrint(">>t2 res: ${result.toString().substring(0, 20)}");
+
+    expect(result, isList);
+  });
+
+  test('should get cache when error', () async {
+    MealClientRepository repo = MealClientRepository(
+      MealUnoApiClient(initializer: initializer),
+    );
+    final result = await repo.getProductFromCacheOnError();
+
+    debugPrint(">>t3 res: ${result.toString().substring(0, 20)}");
+
+    expect(result, isList);
   });
 }
