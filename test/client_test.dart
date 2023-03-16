@@ -1,0 +1,68 @@
+// ignore_for_file: public_member_api_docs, sort_constructors_first
+import 'dart:io';
+
+import 'package:flutter/material.dart';
+import 'package:flutter_test/flutter_test.dart';
+import 'package:hive_flutter/hive_flutter.dart';
+import 'package:meal_client/src/data/meal/meal_api_client.dart';
+import 'package:meal_client/src/data/meal/meal_authenticator.dart';
+import 'package:meal_client/src/data/meal/meal_uno_initializer.dart';
+import 'package:meal_client/src/data/meal/meal_uno_interceptors.dart';
+import 'package:meal_client/src/domain/meal/i_meal_client.dart';
+import 'package:path_provider/path_provider.dart';
+
+import 'keys.dart';
+
+///this is how sould be used in code
+class MealClientRepository {
+  final IMealClient _client;
+  MealClientRepository(this._client);
+
+  getProducts() async {
+    return await _client.getMethod('/estoque/produto');
+  }
+
+  getProductsWithCache() async {
+    return await _client.getMethod('/estoque/produto', enableCache: true);
+  }
+}
+
+void main() async {
+  /// init hive
+  Directory dir = await getApplicationDocumentsDirectory();
+  await Hive.initFlutter(dir.path);
+
+  ///responsible for auth methods
+  ///recive a client to avoid loop with initializer
+  final authenticator = MealAuthenticator(
+    baseUrl: baseUrl,
+    user: user,
+    password: password,
+    account: account,
+  );
+
+  ///responsible to intercep request and respose to add
+  ///headers for exemple and get auth token
+  final interceptors = MealUnoInterceptors(authenticator: authenticator);
+
+  ///will get interceptor and url to return a client, used in repositories
+  final initializer = MealUnoInitializer(baseUrl, interceptors);
+
+  test('should return a List', () async {
+    MealClientRepository repo = MealClientRepository(
+      MealUnoApiClient(initializer: initializer),
+    );
+    final result = await repo.getProducts();
+    debugPrint(">>$result");
+    expect(result, isList);
+  });
+
+  test('should use cache', () async {
+    MealClientRepository repo = MealClientRepository(
+      MealUnoApiClient(initializer: initializer),
+    );
+    final result = await repo.getProductsWithCache();
+
+    print(result);
+  });
+}
