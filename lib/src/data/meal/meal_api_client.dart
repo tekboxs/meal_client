@@ -39,6 +39,7 @@ class MealUnoApiClient implements IMealClient {
     if (data is! MealDataBaseError) {
       //if not errors mean key is valid
       debugPrint(">> send data from cache");
+
       return data;
     }
     return;
@@ -55,9 +56,13 @@ class MealUnoApiClient implements IMealClient {
   }) async {
     // Cache verification
     if (enableCache) {
-      final cachedData = await _cacheHandle(url);
+      final cachedData = await _cacheHandle(initializer.baseUrl + url);
       if (cachedData != null && cachedData is! MealDataBaseError) {
-        return cachedData;
+        return _defaultSelection(
+          null,
+          defaultKeySelector,
+          cacheData: cachedData,
+        );
       }
     }
     try {
@@ -80,7 +85,11 @@ class MealUnoApiClient implements IMealClient {
     } catch (e) {
       final cachedData = await _cacheHandle(initializer.baseUrl + url);
       if (cachedData != null && cachedData is! MealDataBaseError) {
-        return cachedData;
+        return _defaultSelection(
+          null,
+          defaultKeySelector,
+          cacheData: cachedData,
+        );
       }
       return MealClientError.notFound;
     }

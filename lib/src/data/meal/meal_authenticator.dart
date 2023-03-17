@@ -38,8 +38,25 @@ class MealAuthenticator {
     }
   }
 
+  _removeOldDataBase() async {
+    await MealDataBase().clearMemory();
+  }
+
   getToken() async {
     String? token = await MealDataBase().readMethod(ClientKeys.token);
+
+    ///check for token of another account
+    if (token != null) {
+      final tokenData = JwtDecoder.decode(token);
+      if (tokenData['nameid'] != user) {
+        token = null;
+      }
+      if (tokenData['groupsid'] != account) {
+        debugPrint(">>>> removing old data base");
+        await _removeOldDataBase();
+      }
+    }
+
     if (token == null || JwtDecoder.isExpired(token)) {
       token = await _generateNewToken();
     }
