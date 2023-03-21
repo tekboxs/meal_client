@@ -16,7 +16,7 @@ dependencies:
   # flutter_isolate: ^2.0.4
   # flutter_downloader: ^1.10.2
   db_commons:
-    path: C:/Users/tekbo/packages/commons/db_commons
+    git: https://github.com/tekboxs/db_commons.git
 
 dev_dependencies:
   flutter_lints: ^2.0.0

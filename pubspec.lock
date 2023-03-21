@@ -137,9 +137,11 @@ packages:
   db_commons:
     dependency: "direct main"
     description:
-      path: "C:/Users/tekbo/packages/commons/db_commons"
-      relative: false
-    source: path
+      path: "."
+      ref: HEAD
+      resolved-ref: "10e12cc56a253d021729e8b371fcab691dff5b7e"
+      url: "https://github.com/tekboxs/db_commons.git"
+    source: git
     version: "0.0.0"
   fake_async:
     dependency: transitive
