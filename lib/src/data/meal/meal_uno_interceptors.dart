@@ -4,7 +4,7 @@ import 'package:uno/uno.dart';
 import 'meal_authenticator.dart';
 
 class MealUnoInterceptors {
-  MealAuthenticator authenticator;
+  MealAuthenticator? authenticator;
   MealClientDBAdapter adapter = MealClientDBAdapter();
   MealUnoInterceptors({required this.authenticator});
 
@@ -17,9 +17,9 @@ class MealUnoInterceptors {
   }
 
   onRequest(Request request) async {
-    if (request.headers.isEmpty) {
+    if (request.headers.isEmpty && authenticator != null) {
       //delegate to client
-      request.headers.addAll(await authenticator.getToken());
+      request.headers.addAll(await authenticator!.getToken());
     }
 
     return request;

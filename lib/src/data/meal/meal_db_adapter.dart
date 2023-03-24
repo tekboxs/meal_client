@@ -2,7 +2,7 @@ import 'package:db_commons/db_commons.dart';
 import 'package:flutter/material.dart';
 import 'package:meal_client/src/data/models/cache_model.dart';
 
-import '../../domain/meal/i_meal_db_adpter.dart';
+import '../../domain/data_base/i_meal_db_adpter.dart';
 
 enum MealDataBaseError { notFound, outdated }
 
