@@ -1,15 +1,8 @@
 // ignore_for_file: public_member_api_docs, sort_constructors_first
-import 'dart:io';
 
 import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
-import 'package:hive_flutter/hive_flutter.dart';
-import 'package:meal_client/src/data/meal/meal_api_client.dart';
-import 'package:meal_client/src/data/meal/meal_authenticator.dart';
-import 'package:meal_client/src/data/meal/meal_uno_initializer.dart';
-import 'package:meal_client/src/data/meal/meal_uno_interceptors.dart';
-import 'package:meal_client/src/domain/meal/i_meal_client.dart';
-import 'package:path_provider/path_provider.dart';
+import 'package:meal_client/meal_client.dart';
 
 import 'keys.dart';
 
@@ -40,8 +33,7 @@ class MealClientRepository {
 
 void main() async {
   /// init hive
-  Directory dir = await getApplicationDocumentsDirectory();
-  await Hive.initFlutter(dir.path);
+  await MealHiveInitializer().init();
 
   ///responsible for auth methods
   ///recive a client to avoid loop with initializer
