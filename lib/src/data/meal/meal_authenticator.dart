@@ -52,7 +52,7 @@ class MealAuthenticator {
   }
 
   _removeOldDataBase() async {
-    await MealDataBase().clearMemory();
+    await MealDataBase(boxName: 'clientBox').clearMemory();
   }
 
   getToken() async {
