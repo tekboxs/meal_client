@@ -51,8 +51,20 @@ class MealAuthenticator {
     }
   }
 
-  _removeOldDataBase() async {
+  ///when change company all settings should be removed
+  _removeAllDatabase() async {
     await MealDataBase(boxName: 'clientBox').clearMemory();
+  }
+
+  ///remove when change user only cache need to be replaced
+  _removeOnlyCache() async {
+    final baseUrl = await MealClientDBAdapter().read(ClientKeys.baseUrl);
+    final account = await MealClientDBAdapter().read(ClientKeys.conta);
+
+    await MealDataBase(boxName: 'clientBox').clearMemory();
+
+    MealClientDBAdapter().save(ClientKeys.baseUrl, baseUrl);
+    MealClientDBAdapter().save(ClientKeys.conta, account);
   }
 
   getToken() async {
@@ -63,10 +75,13 @@ class MealAuthenticator {
     ///check for token of another account
     if (token != null) {
       final tokenData = JwtDecoder.decode(token);
-      if (tokenData['nameid'] != usuario || tokenData['groupsid'] != conta) {
+      if (tokenData['groupsid'] != conta) {
+        token = null;
+        await _removeAllDatabase();
+      } else if (tokenData['nameid'] != usuario) {
         debugPrint("[MealCli] >> Removed old storage");
         token = null;
-        await _removeOldDataBase();
+        await _removeOnlyCache();
       }
     }
 

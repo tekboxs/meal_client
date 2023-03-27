@@ -1,6 +1,4 @@
 enum ClientKeys {
-  employeeUser,
-  employeePassword,
   token,
   usuario,
   senha,
