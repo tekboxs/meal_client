@@ -22,7 +22,7 @@ class MealUnoInterceptors {
       if (authResponse is MealClientError) {
         debugPrint(">> auth fail!!");
       } else {
-        request.headers.addAll({'Authorization': authResponse});
+        request.headers.addAll(authResponse);
       }
     }
 

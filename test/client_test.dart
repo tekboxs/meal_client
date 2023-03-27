@@ -1,5 +1,6 @@
 // ignore_for_file: public_member_api_docs, sort_constructors_first
 
+import 'package:db_commons/db_commons.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:meal_client/meal_client.dart';
@@ -35,11 +36,6 @@ void main() async {
   /// init hive
   await MealHiveInitializer().init();
 
-  MealClientDBAdapter().save(ClientKeys.baseUrl, 'http://cecum.com.br:5005');
-  MealClientDBAdapter().save(ClientKeys.usuario, 'supervisor');
-  MealClientDBAdapter().save(ClientKeys.conta, 'grg');
-  MealClientDBAdapter().save(ClientKeys.senha, 'kx1892');
-
   ///responsible for auth methods
   ///recive a client to avoid loop with initializer
   final authenticator = MealAuthenticator();
@@ -52,6 +48,14 @@ void main() async {
   final initializer = MealUnoInitializer(baseUrl, interceptors);
 
   test('should return a List', () async {
+    await MealDataBase(boxName: 'clientBox').clearMemory();
+
+    MealClientDBAdapter().delete(ClientKeys.token);
+    MealClientDBAdapter().save(ClientKeys.baseUrl, 'http://cecum.com.br:5000');
+    MealClientDBAdapter().save(ClientKeys.usuario, 'supervisor');
+    MealClientDBAdapter().save(ClientKeys.conta, 'grg');
+    MealClientDBAdapter().save(ClientKeys.senha, 'kx1892');
+
     MealClientRepository repo = MealClientRepository(
       MealUnoApiClient(initializer: initializer),
     );

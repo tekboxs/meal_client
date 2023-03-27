@@ -91,6 +91,13 @@ class MealUnoApiClient implements IMealClient {
           cacheData: cachedData,
         );
       }
+
+      if (e is UnoError) {
+        debugPrint(">>Error NOT FOUND\n${e.data}");
+      } else {
+        debugPrint(">>INTERNAL ERROR \n$e");
+      }
+
       return MealClientError.notFound;
     }
   }
