@@ -7,7 +7,7 @@ import '../../domain/meal/i_meal_client.dart';
 import '../../domain/data_base/i_meal_db_adpter.dart';
 import 'meal_uno_initializer.dart';
 
-enum MealClientError { notFound, invalidResponse }
+enum MealClientError { notFound, invalidResponse, auth }
 
 class MealUnoApiClient implements IMealClient {
   final MealUnoInitializer initializer;

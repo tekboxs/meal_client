@@ -35,14 +35,14 @@ void main() async {
   /// init hive
   await MealHiveInitializer().init();
 
+  MealClientDBAdapter().save(ClientKeys.baseUrl, 'http://cecum.com.br:5005');
+  MealClientDBAdapter().save(ClientKeys.usuario, 'supervisor');
+  MealClientDBAdapter().save(ClientKeys.conta, 'grg');
+  MealClientDBAdapter().save(ClientKeys.senha, 'kx1892');
+
   ///responsible for auth methods
   ///recive a client to avoid loop with initializer
-  final authenticator = MealAuthenticator(
-    baseUrl: baseUrl,
-    user: user,
-    password: password,
-    account: account,
-  );
+  final authenticator = MealAuthenticator();
 
   ///responsible to intercep request and respose to add
   ///headers for exemple and get auth token

@@ -1,7 +1,6 @@
-import 'package:meal_client/src/data/meal/meal_db_adapter.dart';
+import 'package:flutter/material.dart';
+import 'package:meal_client/meal_client.dart';
 import 'package:uno/uno.dart';
-
-import 'meal_authenticator.dart';
 
 class MealUnoInterceptors {
   MealAuthenticator? authenticator;
@@ -19,7 +18,12 @@ class MealUnoInterceptors {
   onRequest(Request request) async {
     if (request.headers.isEmpty && authenticator != null) {
       //delegate to client
-      request.headers.addAll(await authenticator!.getToken());
+      final authResponse = await authenticator!.getToken();
+      if (authResponse is MealClientError) {
+        debugPrint(">> auth fail!!");
+      } else {
+        request.headers.addAll({'Authorization': authResponse});
+      }
     }
 
     return request;
