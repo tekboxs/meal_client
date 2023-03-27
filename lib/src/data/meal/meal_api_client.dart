@@ -28,7 +28,7 @@ class MealUnoApiClient implements IMealClient {
         return cacheData[defaultKeySelector];
       }
     }
-    debugPrint(">>default key not found");
+    debugPrint("[MealCli] >> default key not found");
     return response?.data ?? cacheData ?? MealClientError.invalidResponse;
   }
 
@@ -38,7 +38,7 @@ class MealUnoApiClient implements IMealClient {
 
     if (data is! MealDataBaseError) {
       //if not errors mean key is valid
-      debugPrint(">> send data from cache");
+      debugPrint("[MealCli] >>  send data from cache");
 
       return data;
     }
@@ -93,9 +93,9 @@ class MealUnoApiClient implements IMealClient {
       }
 
       if (e is UnoError) {
-        debugPrint(">>Error NOT FOUND\n${e.data}");
+        debugPrint("[MealCli] >> Error NOT FOUND\n${e.data}");
       } else {
-        debugPrint(">>INTERNAL ERROR \n$e");
+        debugPrint("[MealCli] >> INTERNAL ERROR \n$e");
       }
 
       return MealClientError.notFound;

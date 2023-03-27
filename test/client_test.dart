@@ -23,7 +23,7 @@ class MealClientRepository {
   getProductFromCacheOnError() async {
     await _client.getMethod('/estoque/produto');
 
-    debugPrint(">>request done, executing error");
+    debugPrint("[MealCli] >> request done, executing error");
 
     return await _client.getMethod(
       '/estoque/produto',
@@ -61,9 +61,9 @@ void main() async {
     );
     final result = await repo.getProducts();
 
-    debugPrint(">> t1 res: ${result.toString().substring(0, 20)}");
+    debugPrint("[MealCli] >>  t1 res: ${result.toString().substring(0, 20)}");
     expect(result, isList);
-    debugPrint(">> t1 item: ${result.first}");
+    debugPrint("[MealCli] >>  t1 item: ${result.first}");
   });
 
   test('should use cache', () async {
@@ -72,10 +72,10 @@ void main() async {
     );
     final result = await repo.getProductsWithCache();
 
-    debugPrint(">> t2 res: ${result.toString().substring(0, 20)}");
+    debugPrint("[MealCli] >>  t2 res: ${result.toString().substring(0, 20)}");
 
     expect(result, isList);
-    debugPrint(">> t2 item: ${result.first}");
+    debugPrint("[MealCli] >>  t2 item: ${result.first}");
   });
 
   test('should get cache when error', () async {
@@ -84,9 +84,9 @@ void main() async {
     );
     final result = await repo.getProductFromCacheOnError();
 
-    debugPrint(">> t3 res: ${result.toString().substring(0, 20)}");
+    debugPrint("[MealCli] >>  t3 res: ${result.toString().substring(0, 20)}");
 
     expect(result, isList);
-    debugPrint(">> t3 item: ${result.first}");
+    debugPrint("[MealCli] >>  t3 item: ${result.first}");
   });
 }

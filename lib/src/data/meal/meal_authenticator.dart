@@ -43,10 +43,10 @@ class MealAuthenticator {
       });
       String token = response.data['data']['accessToken'];
       await MealDataBase().writeMethod(ClientKeys.token, token);
-      debugPrint(">>new token saved");
+      debugPrint("[MealCli] >> new token saved");
       return token;
     } catch (e) {
-      debugPrint(">>! cant auth $e");
+      debugPrint("[MealCli] >> ! cant auth $e");
       return MealClientError.auth;
     }
   }
@@ -63,11 +63,9 @@ class MealAuthenticator {
     ///check for token of another account
     if (token != null) {
       final tokenData = JwtDecoder.decode(token);
-      if (tokenData['nameid'] != usuario) {
+      if (tokenData['nameid'] != usuario || tokenData['groupsid'] != conta) {
+        debugPrint("[MealCli] >> Removed old storage");
         token = null;
-      }
-      if (tokenData['groupsid'] != conta) {
-        debugPrint(">>>> removing old data base");
         await _removeOldDataBase();
       }
     }

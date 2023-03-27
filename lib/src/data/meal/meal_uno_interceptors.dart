@@ -20,7 +20,7 @@ class MealUnoInterceptors {
       //delegate to client
       final authResponse = await authenticator!.getToken();
       if (authResponse is MealClientError) {
-        debugPrint(">> auth fail!!");
+        debugPrint("[MealCli] >>  auth fail!!");
       } else {
         request.headers.addAll(authResponse);
       }

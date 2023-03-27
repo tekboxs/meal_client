@@ -16,7 +16,7 @@ class MealClientDBAdapter implements IMealDBAdpter {
       key,
       CacheModel(creationDate: DateTime.now(), value: value).toString(),
     );
-    debugPrint(">> $key Saved");
+    debugPrint("[MealCli] >>  $key Saved");
   }
 
   @override
@@ -37,6 +37,6 @@ class MealClientDBAdapter implements IMealDBAdpter {
   @override
   void delete(key) async {
     await dataBase.deleteMethod(key);
-    debugPrint(">> $key Deleted");
+    debugPrint("[MealCli] >>  $key Deleted");
   }
 }
