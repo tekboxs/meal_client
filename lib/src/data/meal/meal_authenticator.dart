@@ -72,6 +72,11 @@ class MealAuthenticator {
 
     dynamic token = await MealClientDBAdapter().read(ClientKeys.token);
 
+    if (token is MealDataBaseError) {
+      debugPrint("[MealCli] >> token not found in DB");
+      token = null;
+    }
+
     ///check for token of another account
     if (token != null) {
       final tokenData = JwtDecoder.decode(token);
