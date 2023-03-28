@@ -8,6 +8,6 @@ dependencies:</br>
 &nbsp;&nbsp;meal_client:</br>
 &nbsp;&nbsp;&nbsp;&nbsp;git:</br>
 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;url: https://github.com/tekboxs/meal_client</br>
-&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;ref: main</br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;ref: 1.0.1</br>
 
 <h3>Para utilização consulte: /test/client_test.dart</h3>
