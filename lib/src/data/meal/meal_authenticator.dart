@@ -42,7 +42,7 @@ class MealAuthenticator {
         "Content-Type": "application/json"
       });
       String token = response.data['data']['accessToken'];
-      await MealDataBase().writeMethod(ClientKeys.token, token);
+      MealClientDBAdapter().save(ClientKeys.token, token);
       debugPrint("[MealCli] >> new token saved");
       return token;
     } catch (e) {
@@ -70,7 +70,7 @@ class MealAuthenticator {
   getToken() async {
     await _initFields();
 
-    dynamic token = await MealDataBase().readMethod(ClientKeys.token);
+    dynamic token = await MealClientDBAdapter().read(ClientKeys.token);
 
     ///check for token of another account
     if (token != null) {

@@ -47,6 +47,29 @@ void main() async {
   ///will get interceptor and url to return a client, used in repositories
   final initializer = MealUnoInitializer(baseUrl, interceptors);
 
+  test('should return a Error', () async {
+    await MealDataBase(boxName: 'clientBox').clearMemory();
+
+    MealClientDBAdapter().save(ClientKeys.baseUrl, 'http://cecum.com.br:5000');
+    MealClientDBAdapter().save(ClientKeys.usuario, 'supervisor');
+    MealClientDBAdapter().save(ClientKeys.conta, 'grg');
+    MealClientDBAdapter().save(ClientKeys.senha, 'kx1892');
+
+    MealClientRepository repo = MealClientRepository(
+      MealUnoApiClient(initializer: initializer),
+    );
+    final result = await repo.getProducts();
+
+    debugPrint(">> result with success: ${result.toString().substring(0, 20)}");
+
+    MealClientDBAdapter().delete(ClientKeys.token);
+    MealClientDBAdapter().save(ClientKeys.senha, 'kx1892--');
+
+    final result2 = await repo.getProducts();
+    debugPrint(">> result with error: ${result2.toString().substring(0, 20)}");
+
+    expect(result2, MealClientError.notFound);
+  });
   test('should return a List', () async {
     await MealDataBase(boxName: 'clientBox').clearMemory();
 

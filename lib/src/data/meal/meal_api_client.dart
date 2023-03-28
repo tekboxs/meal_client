@@ -73,7 +73,7 @@ class MealUnoApiClient implements IMealClient {
           headers: headers ?? {},
           timeout: const Duration(seconds: 5),
         ),
-        maxAttempts: 3,
+        maxAttempts: 2,
       );
 
       // Response handling
