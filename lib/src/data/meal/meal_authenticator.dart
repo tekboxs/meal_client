@@ -90,7 +90,13 @@ class MealAuthenticator {
       }
     }
 
-    if (token == null || JwtDecoder.isExpired(token)) {
+    if (token == null) {
+      ///here remove cache to avoid user share
+      ///cache
+      await _removeOnlyCache();
+      token = await _generateNewToken();
+    } else if (JwtDecoder.isExpired(token)) {
+      ///should be same user only expired
       token = await _generateNewToken();
     }
 
