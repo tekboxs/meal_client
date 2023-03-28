@@ -36,7 +36,7 @@ class MealUnoApiClient implements IMealClient {
     if (url == null) return;
     final data = await adapter.read(Uri.parse(url), ignoreCache: false);
 
-    if (data is! MealDataBaseError) {
+    if (data != null) {
       //if not errors mean key is valid
       debugPrint("[MealCli] >>  send data from cache");
 
@@ -98,7 +98,7 @@ class MealUnoApiClient implements IMealClient {
         debugPrint("[MealCli] >> INTERNAL ERROR \n$e");
       }
 
-      return MealClientError.notFound;
+      throw MealClientError.notFound;
     }
   }
 

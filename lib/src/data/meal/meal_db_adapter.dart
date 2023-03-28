@@ -11,7 +11,7 @@ class MealClientDBAdapter implements IMealDBAdpter {
   final MealDataBase dataBase = MealDataBase(boxName: 'clientBox');
 
   @override
-  void save(key, value) async {
+  save(key, value) async {
     await dataBase.writeMethod(
       key,
       CacheModel(creationDate: DateTime.now(), value: value).toString(),
@@ -22,7 +22,12 @@ class MealClientDBAdapter implements IMealDBAdpter {
   @override
   read(key, {bool ignoreCache = true}) async {
     final data = await dataBase.readMethod(key);
-    if (data == null) return MealDataBaseError.notFound;
+
+    if (data == null) {
+      debugPrint("[MealDBadpter] >> $key not found in DB");
+      return null;
+    }
+
     if (ignoreCache) return CacheModel.fromJson(data).value;
 
     CacheModel cache = CacheModel.fromJson(data);
@@ -31,11 +36,13 @@ class MealClientDBAdapter implements IMealDBAdpter {
       return cache.value;
     }
 
-    return MealDataBaseError.outdated;
+    debugPrint("[MealDBadpter] >> $key could be OUTDATED");
+
+    return null;
   }
 
   @override
-  void delete(key) async {
+  delete(key) async {
     await dataBase.deleteMethod(key);
     debugPrint("[MealCli] >>  $key Deleted");
   }

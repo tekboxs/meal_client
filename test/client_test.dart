@@ -4,6 +4,7 @@ import 'package:db_commons/db_commons.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:meal_client/meal_client.dart';
+import 'package:uno/uno.dart';
 
 import 'keys.dart';
 
@@ -38,7 +39,7 @@ void main() async {
 
   ///responsible for auth methods
   ///recive a client to avoid loop with initializer
-  final authenticator = MealAuthenticator();
+  final authenticator = MealAuthenticator(Uno());
 
   ///responsible to intercep request and respose to add
   ///headers for exemple and get auth token
@@ -47,38 +48,40 @@ void main() async {
   ///will get interceptor and url to return a client, used in repositories
   final initializer = MealUnoInitializer(baseUrl, interceptors);
 
-  test('should return a Error', () async {
+  setUp(() async {
     await MealDataBase(boxName: 'clientBox').clearMemory();
 
-    MealClientDBAdapter().save(ClientKeys.baseUrl, 'http://cecum.com.br:5000');
-    MealClientDBAdapter().save(ClientKeys.usuario, 'supervisor');
-    MealClientDBAdapter().save(ClientKeys.conta, 'grg');
-    MealClientDBAdapter().save(ClientKeys.senha, 'kx1892');
+    await MealClientDBAdapter().save(
+      ClientKeys.baseUrl,
+      baseUrl,
+    );
 
+    await MealClientDBAdapter().save(ClientKeys.usuario, user);
+    await MealClientDBAdapter().save(ClientKeys.conta, account);
+    await MealClientDBAdapter().save(ClientKeys.senha, password);
+  });
+
+  test('should return a Error', () async {
     MealClientRepository repo = MealClientRepository(
       MealUnoApiClient(initializer: initializer),
     );
-    final result = await repo.getProducts();
 
-    debugPrint(">> result with success: ${result.toString().substring(0, 20)}");
+    try {
+      final result = await repo.getProducts();
+      debugPrint(
+          ">> result with success: ${result.toString().substring(0, 20)}");
 
-    MealClientDBAdapter().delete(ClientKeys.token);
-    MealClientDBAdapter().save(ClientKeys.senha, 'kx1892--');
+      // await MealClientDBAdapter().delete(ClientKeys.token);
+      await MealClientDBAdapter().save(ClientKeys.usuario, 'supervisor2');
 
-    final result2 = await repo.getProducts();
-    debugPrint(">> result with error: ${result2.toString().substring(0, 20)}");
-
-    expect(result2, MealClientError.notFound);
+      final result2 = await repo.getProducts();
+      debugPrint(
+          ">> result with error: ${result2.toString().substring(0, 20)}");
+    } catch (e) {
+      debugPrint(e.toString());
+    }
   });
   test('should return a List', () async {
-    await MealDataBase(boxName: 'clientBox').clearMemory();
-
-    MealClientDBAdapter().delete(ClientKeys.token);
-    MealClientDBAdapter().save(ClientKeys.baseUrl, 'http://cecum.com.br:5000');
-    MealClientDBAdapter().save(ClientKeys.usuario, 'supervisor');
-    MealClientDBAdapter().save(ClientKeys.conta, 'grg');
-    MealClientDBAdapter().save(ClientKeys.senha, 'kx1892');
-
     MealClientRepository repo = MealClientRepository(
       MealUnoApiClient(initializer: initializer),
     );

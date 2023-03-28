@@ -18,11 +18,11 @@ class MealUnoInterceptors {
   onRequest(Request request) async {
     if (request.headers.isEmpty && authenticator != null) {
       //delegate to client
-      final authResponse = await authenticator!.getToken();
-      if (authResponse is MealClientError) {
-        debugPrint("[MealCli] >>  auth fail!!");
+      final token = await authenticator!.getToken();
+      if (token == null) {
+        debugPrint("[MealCli] >> recived [null token], continue without add");
       } else {
-        request.headers.addAll(authResponse);
+        request.headers.addAll({'Authorization': 'Bearer $token'});
       }
     }
 
