@@ -34,10 +34,10 @@ class _MealAuthenticatorDataBase {
 }
 
 class MealAuthenticator {
-  final Uno _client;
+  final Uno _client = Uno();
   String? baseUrl, usuario, senha, conta;
   int authAttemps = 0;
-  MealAuthenticator(this._client);
+  MealAuthenticator();
 
   ///Read DB to set auth fields
   ///should be used on [getToken] start

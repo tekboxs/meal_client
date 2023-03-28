@@ -4,7 +4,6 @@ import 'package:db_commons/db_commons.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:meal_client/meal_client.dart';
-import 'package:uno/uno.dart';
 
 import 'keys.dart';
 
@@ -39,7 +38,7 @@ void main() async {
 
   ///responsible for auth methods
   ///recive a client to avoid loop with initializer
-  final authenticator = MealAuthenticator(Uno());
+  final authenticator = MealAuthenticator();
 
   ///responsible to intercep request and respose to add
   ///headers for exemple and get auth token
