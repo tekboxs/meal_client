@@ -15,17 +15,16 @@ class MealUnoApiClient implements IMealClient {
 
   MealUnoApiClient({required this.initializer});
 
-  _defaultSelection(Response? response, String defaultKeySelector,
-      {cacheData}) {
+  _defaultSelection(Response? response, String defaultSelector, {cacheData}) {
     if (response != null && response.data is Map) {
-      if ((response.data as Map).containsKey(defaultKeySelector)) {
-        return response.data[defaultKeySelector];
+      if ((response.data as Map).containsKey(defaultSelector)) {
+        return response.data[defaultSelector];
       }
     }
 
     if (cacheData != null && cacheData is Map) {
-      if (cacheData.containsKey(defaultKeySelector)) {
-        return cacheData[defaultKeySelector];
+      if (cacheData.containsKey(defaultSelector)) {
+        return cacheData[defaultSelector];
       }
     }
     debugPrint("[MealCli] >> default key not found");
@@ -45,13 +44,13 @@ class MealUnoApiClient implements IMealClient {
     return;
   }
 
-  ///[defaultKeySelector] used to expose contents of constant key
+  ///[defaultSelector] used to expose contents of constant key
   @override
   Future getMethod(
     String url, {
     Map<String, String>? headers,
     ResponseType? responseType,
-    String defaultKeySelector = 'data',
+    String defaultSelector = 'data',
     bool enableCache = false,
   }) async {
     // Cache verification
@@ -60,7 +59,7 @@ class MealUnoApiClient implements IMealClient {
       if (cachedData != null && cachedData is! MealDataBaseError) {
         return _defaultSelection(
           null,
-          defaultKeySelector,
+          defaultSelector,
           cacheData: cachedData,
         );
       }
@@ -77,8 +76,8 @@ class MealUnoApiClient implements IMealClient {
       );
 
       // Response handling
-      if (defaultKeySelector.isNotEmpty) {
-        return _defaultSelection(response, defaultKeySelector);
+      if (defaultSelector.isNotEmpty) {
+        return _defaultSelection(response, defaultSelector);
       } else {
         return response.data;
       }
@@ -87,7 +86,7 @@ class MealUnoApiClient implements IMealClient {
       if (cachedData != null && cachedData is! MealDataBaseError) {
         return _defaultSelection(
           null,
-          defaultKeySelector,
+          defaultSelector,
           cacheData: cachedData,
         );
       }
@@ -107,6 +106,7 @@ class MealUnoApiClient implements IMealClient {
     String url,
     data, {
     Map<String, String>? headers,
+    String defaultSelector = 'data',
     ResponseType? responseType,
   }) async {
     return await initializer().post(
