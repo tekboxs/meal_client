@@ -53,7 +53,12 @@ class MealUnoApiClient implements IMealClient {
     String defaultSelector = 'data',
     bool enableCache = false,
   }) async {
-    String completeUrl = initializer.baseUrl + url;
+    String completeUrl = '';
+    if (!url.startsWith('http')) {
+      completeUrl = initializer.baseUrl + url;
+    } else {
+      completeUrl = url;
+    }
 
     // Cache verification
     if (enableCache) {
