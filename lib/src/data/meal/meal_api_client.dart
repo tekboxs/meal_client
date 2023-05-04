@@ -53,9 +53,11 @@ class MealUnoApiClient implements IMealClient {
     String defaultSelector = 'data',
     bool enableCache = false,
   }) async {
+    String completeUrl = initializer.baseUrl + url;
+
     // Cache verification
     if (enableCache) {
-      final cachedData = await _cacheHandle(initializer.baseUrl + url);
+      final cachedData = await _cacheHandle(completeUrl);
       if (cachedData != null && cachedData is! MealDataBaseError) {
         return _defaultSelection(
           null,
@@ -65,21 +67,34 @@ class MealUnoApiClient implements IMealClient {
       }
     }
     try {
-      final response = await retry(
-        () => initializer().get(
-          url,
-          responseType: responseType ?? ResponseType.json,
-          headers: headers ?? {},
-          timeout: const Duration(seconds: 5),
-        ),
-        maxAttempts: 2,
-      );
+      final Response? response;
+      if (url.startsWith('http')) {
+        response = await retry(
+          () => initializer.customInit().get(
+                url,
+                responseType: responseType ?? ResponseType.json,
+                headers: headers ?? {},
+                timeout: const Duration(seconds: 5),
+              ),
+          maxAttempts: 2,
+        );
+      } else {
+        response = await retry(
+          () => initializer().get(
+            url,
+            responseType: responseType ?? ResponseType.json,
+            headers: headers ?? {},
+            timeout: const Duration(seconds: 5),
+          ),
+          maxAttempts: 2,
+        );
+      }
 
       // Response handling
       if (defaultSelector.isNotEmpty) {
         return _defaultSelection(response, defaultSelector);
       } else {
-        return response.data;
+        return response?.data;
       }
     } catch (e) {
       final cachedData = await _cacheHandle(initializer.baseUrl + url);
