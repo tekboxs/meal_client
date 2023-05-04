@@ -17,5 +17,9 @@ class MealUnoInitializer {
           onError: interceptors.onError,
         );
 
-  Uno customInit() => Uno();
+  Uno customInit() => Uno()
+    ..interceptors.request.use(
+          (p0) async => await interceptors.onRequest(p0),
+          onError: interceptors.onError,
+        );
 }

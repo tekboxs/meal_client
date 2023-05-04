@@ -75,12 +75,12 @@ class MealUnoApiClient implements IMealClient {
       final Response? response;
       if (url.startsWith('http')) {
         response = await retry(
-          () => Uno().get(
-            url,
-            responseType: responseType ?? ResponseType.json,
-            headers: headers ?? {},
-            timeout: const Duration(seconds: 5),
-          ),
+          () => initializer.customInit().get(
+                url,
+                responseType: responseType ?? ResponseType.json,
+                headers: headers ?? {},
+                timeout: const Duration(seconds: 5),
+              ),
           maxAttempts: 2,
         );
       } else {
