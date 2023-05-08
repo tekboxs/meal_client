@@ -1,16 +1,24 @@
 // ignore_for_file: public_member_api_docs, sort_constructors_first
 
+import 'dart:io';
+
 import 'package:db_commons/db_commons.dart';
 import 'package:flutter/material.dart';
 import 'package:hive_flutter/hive_flutter.dart';
 import 'package:meal_client/meal_client.dart';
 import 'package:test/test.dart';
 import 'keys.dart';
-// ignore_for_file: public_member_api_docs, sort_constructors_first
 
+// ignore_for_file: public_member_api_docs, sort_constructors_first
+// import 'package:path_provider/path_provider.dart';
 ///this is how sould be used in code
+xo() {
+  Directory.systemTemp.createTemp();
+}
+
 class MealClientRepository {
   final IMealClient _client;
+
   MealClientRepository(this._client);
 
   getProducts() async {
@@ -78,7 +86,7 @@ void main() async {
       // ">> result with success: ${result.toString().substring(0, 20)}");
 
       // await MealClientDBAdapter().delete(ClientKeys.token);
-      await MealClientDBAdapter().save(ClientKeys.usuario, 'supervisor2');
+      await MealClientDBAdapter().save(ClientKeys.usuario, 'fddas');
 
       final result2 = await repo.getProducts();
       // debugPrint(
@@ -132,5 +140,24 @@ void main() async {
 
     expect(result, isList);
     // debugPrint("[MealCli] >>  t3 item: ${result.first}");
+  });
+  test('should auth new user', () async {
+    MealClientRepository repo = MealClientRepository(
+      MealUnoApiClient(initializer: initializer),
+    );
+
+    await MealClientDBAdapter().save(ClientKeys.usuario, user);
+    await MealClientDBAdapter().save(ClientKeys.senha, password);
+
+    final result = await repo.getProducts();
+
+    expect(result, isList);
+
+    await MealClientDBAdapter().save(ClientKeys.usuario, user2);
+    await MealClientDBAdapter().save(ClientKeys.senha, password2);
+
+    final result2 = await repo.getProducts();
+
+    expect(result2, isList);
   });
 }

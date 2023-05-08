@@ -18,11 +18,15 @@ class _MealAuthenticatorDataBase {
 
     final baseUrlHolder = await MealClientDBAdapter().read(ClientKeys.baseUrl);
     final accountHolder = await MealClientDBAdapter().read(ClientKeys.conta);
+    final userHolder = await MealClientDBAdapter().read(ClientKeys.usuario);
+    final passwordHolder = await MealClientDBAdapter().read(ClientKeys.senha);
 
     await MealDataBase(boxName: 'clientBox').clearMemory();
 
     await MealClientDBAdapter().save(ClientKeys.baseUrl, baseUrlHolder);
     await MealClientDBAdapter().save(ClientKeys.conta, accountHolder);
+    await MealClientDBAdapter().save(ClientKeys.usuario, userHolder);
+    await MealClientDBAdapter().save(ClientKeys.senha, passwordHolder);
   }
 
   ///remove all data and configs, used on company change
