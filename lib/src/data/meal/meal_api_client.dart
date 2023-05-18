@@ -129,11 +129,22 @@ class MealUnoApiClient implements IMealClient {
     String defaultSelector = 'data',
     ResponseType? responseType,
   }) async {
-    return await initializer().post(
-      url,
-      data: data,
-      headers: headers ?? {},
-      responseType: responseType ?? ResponseType.json,
-    );
+    if (url.startsWith('http|https')) {
+      //is complete url
+      return await initializer.customInit().post(
+            url,
+            data: data,
+            headers: headers ?? {},
+            responseType: responseType ?? ResponseType.json,
+          );
+    } else {
+      //delegate url
+      return await initializer().post(
+        url,
+        data: data,
+        headers: headers ?? {},
+        responseType: responseType ?? ResponseType.json,
+      );
+    }
   }
 }

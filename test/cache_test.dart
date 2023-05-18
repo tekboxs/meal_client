@@ -3,8 +3,9 @@ import 'dart:io';
 import 'package:flutter/cupertino.dart';
 import 'package:hive_flutter/hive_flutter.dart';
 import 'package:meal_client/src/data/meal/meal_db_adapter.dart';
-import 'package:flutter_test/flutter_test.dart';
+
 import 'package:path_provider/path_provider.dart';
+import 'package:test/test.dart';
 
 void main() async {
   final adapter = MealClientDBAdapter();
