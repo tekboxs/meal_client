@@ -96,7 +96,7 @@ class MealAuthenticator {
     if (tokenData['groupsid'] != conta) {
       debugPrint("[MealCli] >> ACCOUNT CHANGED, cache removal start");
 
-      await _MealAuthenticatorDataBase._removeAllDataBase();
+      await _MealAuthenticatorDataBase._removeUserDataBase();
     } else if (tokenData['nameid'] != usuario) {
       debugPrint("[MealCli] >> USER CHANGED, cache removal start");
 
