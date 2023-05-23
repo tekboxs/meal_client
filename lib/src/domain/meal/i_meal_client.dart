@@ -5,14 +5,29 @@ abstract class IMealClient {
     String url, {
     Map<String, String>? headers,
     ResponseType? responseType,
-    bool enableCache = false,
-    String defaultSelector = 'data',
+    bool disableCacheOnError = false,
+    String exportKey = 'data',
   });
   postMethod(
     String url,
     dynamic data, {
     Map<String, String>? headers,
     ResponseType? responseType,
-    String defaultSelector = 'data',
+    String exportKey = 'data',
+  });
+  putMethod(
+    String url,
+    dynamic data, {
+    Map<String, String>? headers,
+    ResponseType? responseType,
+    bool ignoreResponse = true,
+    String exportKey = 'data',
+  });
+  deleteMethod(
+    String url, {
+    Map<String, String>? headers,
+    ResponseType? responseType,
+    bool ignoreResponse = true,
+    String exportKey = 'data',
   });
 }

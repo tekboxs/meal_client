@@ -28,17 +28,6 @@ class _MealAuthenticatorDataBase {
     await MealClientDBAdapter().save(ClientKeys.usuario, userHolder);
     await MealClientDBAdapter().save(ClientKeys.senha, passwordHolder);
   }
-
-  ///remove all data and configs, used on company change
-  static Future _removeAllDataBase() async {
-    debugPrint(
-        "[MealCli] >> clearing ALL data base\n[ONLY KEEP BASE URL]\nInfo: update url before request");
-    final baseUrlHolder = await MealClientDBAdapter().read(ClientKeys.baseUrl);
-
-    await MealDataBase(boxName: 'clientBox').clearMemory();
-
-    await MealClientDBAdapter().save(ClientKeys.baseUrl, baseUrlHolder);
-  }
 }
 
 class MealAuthenticator {
