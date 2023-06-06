@@ -21,7 +21,7 @@ class _MealAuthenticatorDataBase {
     final userHolder = await MealClientDBAdapter().read(ClientKeys.usuario);
     final passwordHolder = await MealClientDBAdapter().read(ClientKeys.senha);
 
-    await MealDataBase(boxName: 'clientBox').clearMemory();
+    await MealDataBase(boxName: 'clientBox').clear();
 
     await MealClientDBAdapter().save(ClientKeys.baseUrl, baseUrlHolder);
     await MealClientDBAdapter().save(ClientKeys.conta, accountHolder);

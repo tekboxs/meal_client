@@ -39,7 +39,7 @@ void main() async {
 
   setUp(() async {
     await setUpTestHive();
-    await MealDataBase(boxName: 'clientBox').clearMemory();
+    await MealDataBase(boxName: 'clientBox').clear();
 
     await MealClientDBAdapter().save(
       ClientKeys.baseUrl,
