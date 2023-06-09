@@ -16,8 +16,8 @@ class MealUnoApiClient extends MealUnoApiUtils implements IMealClient {
 
   MealUnoApiClient({required this.initializer});
 
-  static const int defaultRetryAmount = 2;
-  static const int defaultTimeoutDuration = 2;
+  static const int defaultRetryAmount = 3;
+  static const int defaultTimeoutDuration = 15;
 
   ///[exportKey] used to expose contents of constant key
   @override
@@ -87,26 +87,30 @@ class MealUnoApiClient extends MealUnoApiUtils implements IMealClient {
     String exportKey = 'data',
     ResponseType? responseType,
   }) async {
-    Response response = await retry<Response>(() async {
-      if (url.startsWith('http|https')) {
-        ///recived full url
-        return await initializer.customInit().post(
-              url,
-              data: data,
-              headers: headers ?? {},
-              timeout: const Duration(seconds: defaultTimeoutDuration * 2),
-              responseType: responseType ?? ResponseType.json,
-            );
-      } else {
-        ///recived only end-point
-        return await initializer().post(
-          url,
-          data: data,
-          headers: headers ?? {},
-          responseType: responseType ?? ResponseType.json,
-        );
-      }
-    });
+    Response response = await retry<Response>(
+      () async {
+        if (url.startsWith('http|https')) {
+          ///recived full url
+          return await initializer.customInit().post(
+                url,
+                data: data,
+                headers: headers ?? {},
+                timeout: const Duration(seconds: defaultTimeoutDuration * 2),
+                responseType: responseType ?? ResponseType.json,
+              );
+        } else {
+          ///recived only end-point
+          return await initializer().post(
+            url,
+            data: data,
+            headers: headers ?? {},
+            timeout: const Duration(seconds: defaultTimeoutDuration * 2),
+            responseType: responseType ?? ResponseType.json,
+          );
+        }
+      },
+      maxAttempts: defaultRetryAmount,
+    );
 
     return _exportObjectData(response.data, exportKey);
   }
@@ -133,10 +137,11 @@ class MealUnoApiClient extends MealUnoApiUtils implements IMealClient {
         return await initializer().delete(
           url,
           headers: headers ?? {},
+          timeout: const Duration(seconds: defaultTimeoutDuration),
           responseType: responseType ?? ResponseType.json,
         );
       }
-    });
+    }, maxAttempts: defaultRetryAmount);
 
     return _exportObjectData(response.data, exportKey);
   }
@@ -148,26 +153,30 @@ class MealUnoApiClient extends MealUnoApiUtils implements IMealClient {
       bool ignoreResponse = true,
       String exportKey = 'data'}) async {
     try {
-      Response response = await retry<Response>(() async {
-        if (url.startsWith('http|https')) {
-          ///recived full url
-          return await initializer.customInit().put(
-                url,
-                data: data,
-                headers: headers ?? {},
-                timeout: const Duration(seconds: defaultTimeoutDuration * 2),
-                responseType: responseType ?? ResponseType.json,
-              );
-        } else {
-          ///recived only end-point
-          return await initializer().put(
-            url,
-            data: data,
-            headers: headers ?? {},
-            responseType: responseType ?? ResponseType.json,
-          );
-        }
-      });
+      Response response = await retry<Response>(
+        () async {
+          if (url.startsWith('http|https')) {
+            ///recived full url
+            return await initializer.customInit().put(
+                  url,
+                  data: data,
+                  headers: headers ?? {},
+                  timeout: const Duration(seconds: defaultTimeoutDuration * 2),
+                  responseType: responseType ?? ResponseType.json,
+                );
+          } else {
+            ///recived only end-point
+            return await initializer().put(
+              url,
+              data: data,
+              headers: headers ?? {},
+              timeout: const Duration(seconds: defaultTimeoutDuration),
+              responseType: responseType ?? ResponseType.json,
+            );
+          }
+        },
+        maxAttempts: defaultRetryAmount,
+      );
 
       return _exportObjectData(response.data, exportKey);
     } catch (e) {
