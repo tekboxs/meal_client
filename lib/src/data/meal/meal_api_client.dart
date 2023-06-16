@@ -17,7 +17,7 @@ class MealUnoApiClient extends MealUnoApiUtils implements IMealClient {
   MealUnoApiClient({required this.initializer});
 
   static const int defaultRetryAmount = 3;
-  static const int defaultTimeoutDuration = 15;
+  static const int defaultTimeoutDuration = 5;
 
   ///[exportKey] used to expose contents of constant key
   @override
