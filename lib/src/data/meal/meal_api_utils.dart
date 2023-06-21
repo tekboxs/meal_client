@@ -1,11 +1,22 @@
 part of 'meal_api_client.dart';
 
 class MealUnoApiUtils {
-  IMealDBAdpter adapter = MealClientDBAdapter();
+  MealClientDBAdapter adapter = MealClientDBAdapter();
+
+  ///if [working memory] availble return instead of request
+  ///have a small duration, used to avoid multiple request
+  ///in short times
+  dynamic _handleWorkCache(String url) async {
+    final memoryItem = await adapter.read(
+      Uri.parse(url),
+      ignoreWorkCache: false,
+    );
+
+    return memoryItem;
+  }
 
   dynamic _handleCache(String? url) async {
     if (url == null) return null;
-    debugPrint("\n\n[MealCli] >> check data from cache\n\n");
 
     return await adapter.read(Uri.parse(url), ignoreCache: false);
   }
@@ -20,7 +31,8 @@ class MealUnoApiUtils {
     }
 
     ///cant find key means response has errors
-    debugPrint("[MealCliUtils] >> object NOT contais exportKey");
-    throw MealClientError.invalidResponse;
+    debugPrint(
+        "[MealCliUtils] >> object ${object.toString().substring(0, 10)} NOT contais exportKey $exportKey");
+    throw Exception(MealClientError.cantExportData);
   }
 }

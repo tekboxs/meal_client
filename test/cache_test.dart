@@ -18,7 +18,7 @@ void main() async {
   });
 
   test('should create a field sync', () async {
-    adapter.save('bolo1', 'fuba');
+    adapter.saveMethod('bolo1', 'fuba');
     debugPrint('[MealCli] >>  keep execution');
   });
 

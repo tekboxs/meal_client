@@ -1,17 +1,15 @@
-import 'package:uno/uno.dart';
-import 'package:flutter_test/flutter_test.dart';
+import 'package:logger/logger.dart';
+
+final logger = Logger();
+ko() {
+  logger.d('message');
+}
+
+k2o() {
+  logger.w('message  2');
+}
 
 void main() {
-  test('test name', () async {
-    final uno = Uno();
-
-    await uno
-        .get('http://cecum.com.br:5000/estoque/produto2',
-            responseType: ResponseType.plain)
-        .then((response) {
-      //response handle
-    }).catchError((error) {
-      error.data;
-    });
-  });
+  ko();
+  k2o();
 }

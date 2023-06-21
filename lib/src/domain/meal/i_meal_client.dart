@@ -6,6 +6,7 @@ abstract class IMealClient {
     Map<String, String>? headers,
     ResponseType? responseType,
     bool disableCacheOnError = false,
+    bool enableWorkMemory = true,
     String exportKey = 'data',
   });
   postMethod(
@@ -13,6 +14,7 @@ abstract class IMealClient {
     dynamic data, {
     Map<String, String>? headers,
     ResponseType? responseType,
+    bool ignoreResponse = true,
     String exportKey = 'data',
   });
   putMethod(

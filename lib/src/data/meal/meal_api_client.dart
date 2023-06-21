@@ -4,12 +4,18 @@ import 'package:retry/retry.dart';
 import 'package:uno/uno.dart';
 
 import '../../domain/meal/i_meal_client.dart';
-import '../../domain/data_base/i_meal_db_adpter.dart';
+
 import 'meal_uno_initializer.dart';
 
 part 'meal_api_utils.dart';
 
-enum MealClientError { notFound, invalidResponse, auth, cantSendData }
+enum MealClientError {
+  cantReciveData,
+  cantSendData,
+  cantExportData,
+  unknow,
+  emptyCache;
+}
 
 class MealUnoApiClient extends MealUnoApiUtils implements IMealClient {
   final MealUnoInitializer initializer;
@@ -27,8 +33,23 @@ class MealUnoApiClient extends MealUnoApiUtils implements IMealClient {
     ResponseType? responseType,
     String exportKey = 'data',
     bool disableCacheOnError = false,
+    bool enableWorkMemory = true,
   }) async {
     try {
+      ///return data instead of request
+      if (enableWorkMemory) {
+        dynamic urlKey;
+
+        if (url.startsWith('http')) {
+          urlKey = url;
+        } else {
+          urlKey = "${initializer.baseUrl}$url";
+        }
+
+        final memoryData = await _handleWorkCache(urlKey);
+        if (memoryData != null) return _exportObjectData(memoryData, exportKey);
+      }
+
       Response response = await retry<Response>(
         () {
           if (url.startsWith('http')) {
@@ -51,31 +72,41 @@ class MealUnoApiClient extends MealUnoApiUtils implements IMealClient {
         },
         maxAttempts: defaultRetryAmount,
       );
+
       return _exportObjectData(response.data, exportKey);
     } catch (e) {
       if (disableCacheOnError) {
         debugPrint(
-          "\n\n[MealCli] >>WARNING cache disabled on error\nError: $e\n\n",
+          "\n\n[MealCli getMethod] >>WARNING cache disabled on error\nError: $e\n\n",
         );
-        throw MealClientError.notFound;
+        throw Exception(MealClientError.emptyCache);
       }
 
-      ///merge urls to get full address
-      final cachedData = await _handleCache(initializer.baseUrl + url);
+      final dynamic cachedData;
+
+      if (url.startsWith('http')) {
+        ///already full address
+        cachedData = await _handleCache(url);
+      } else {
+        ///merge urls to get full address
+        cachedData = await _handleCache(initializer.baseUrl + url);
+      }
+
       if (cachedData != null) {
-        debugPrint("\n\n[MealCli] >>WARNING reponse from cache\nError: $e\n\n");
+        debugPrint(
+            "\n\n[MealCli getMethod] >>WARNING reponse from cache\nError: $e\n\n");
         return _exportObjectData(cachedData, exportKey);
       }
 
       ///at this point have not response or cache
 
       if (e is UnoError) {
-        debugPrint("[MealCli] >> Error NOT FOUND\n${e.data}");
+        debugPrint("[MealCli getMethod] >> UNO ERROR \n${e.data}");
+        throw Exception(MealClientError.cantReciveData);
       } else {
-        debugPrint("[MealCli] >> INTERNAL ERROR \n$e");
+        debugPrint("[MealCli getMethod] >> INTERNAL ERROR \n$e");
+        throw Exception(MealClientError.unknow);
       }
-
-      throw MealClientError.notFound;
     }
   }
 
@@ -86,33 +117,43 @@ class MealUnoApiClient extends MealUnoApiUtils implements IMealClient {
     Map<String, String>? headers,
     String exportKey = 'data',
     ResponseType? responseType,
+    bool ignoreResponse = true,
   }) async {
-    Response response = await retry<Response>(
-      () async {
-        if (url.startsWith('http|https')) {
-          ///recived full url
-          return await initializer.customInit().post(
-                url,
-                data: data,
-                headers: headers ?? {},
-                timeout: const Duration(seconds: defaultTimeoutDuration * 2),
-                responseType: responseType ?? ResponseType.json,
-              );
-        } else {
-          ///recived only end-point
-          return await initializer().post(
-            url,
-            data: data,
-            headers: headers ?? {},
-            timeout: const Duration(seconds: defaultTimeoutDuration * 2),
-            responseType: responseType ?? ResponseType.json,
-          );
-        }
-      },
-      maxAttempts: defaultRetryAmount,
-    );
+    try {
+      Response response = await retry<Response>(
+        () async {
+          if (url.startsWith('http|https')) {
+            ///recived full url
+            return await initializer.customInit().post(
+                  url,
+                  data: data,
+                  headers: headers ?? {},
+                  timeout: const Duration(seconds: defaultTimeoutDuration * 2),
+                  responseType: responseType ?? ResponseType.json,
+                );
+          } else {
+            ///recived only end-point
+            return await initializer().post(
+              url,
+              data: data,
+              headers: headers ?? {},
+              timeout: const Duration(seconds: defaultTimeoutDuration * 2),
+              responseType: responseType ?? ResponseType.json,
+            );
+          }
+        },
+        maxAttempts: defaultRetryAmount,
+      );
 
-    return _exportObjectData(response.data, exportKey);
+      if (!ignoreResponse) return _exportObjectData(response.data, exportKey);
+    } catch (e) {
+      debugPrint("\n\n[MealCli postMethod]>> $url cant send post $e\n\n");
+      if (e is UnoError) {
+        throw Exception(MealClientError.cantSendData);
+      } else {
+        throw Exception(MealClientError.unknow);
+      }
+    }
   }
 
   @override
@@ -123,39 +164,51 @@ class MealUnoApiClient extends MealUnoApiUtils implements IMealClient {
     bool ignoreResponse = true,
     String exportKey = 'data',
   }) async {
-    Response response = await retry<Response>(() async {
-      if (url.startsWith('http|https')) {
-        ///recived full url
-        return await initializer.customInit().delete(
-              url,
-              headers: headers ?? {},
-              timeout: const Duration(seconds: defaultTimeoutDuration * 2),
-              responseType: responseType ?? ResponseType.json,
-            );
-      } else {
-        ///recived only end-point
-        return await initializer().delete(
-          url,
-          headers: headers ?? {},
-          timeout: const Duration(seconds: defaultTimeoutDuration),
-          responseType: responseType ?? ResponseType.json,
-        );
-      }
-    }, maxAttempts: defaultRetryAmount);
+    try {
+      Response response = await retry<Response>(() async {
+        if (url.startsWith('http')) {
+          ///recived full url
+          return await initializer.customInit().delete(
+                url,
+                headers: headers ?? {},
+                timeout: const Duration(seconds: defaultTimeoutDuration * 2),
+                responseType: responseType ?? ResponseType.json,
+              );
+        } else {
+          ///recived only end-point
+          return await initializer().delete(
+            url,
+            headers: headers ?? {},
+            timeout: const Duration(seconds: defaultTimeoutDuration),
+            responseType: responseType ?? ResponseType.json,
+          );
+        }
+      }, maxAttempts: defaultRetryAmount);
 
-    return _exportObjectData(response.data, exportKey);
+      if (!ignoreResponse) return _exportObjectData(response.data, exportKey);
+    } catch (e) {
+      debugPrint("\n\n[MealCli deleteMethod]>> $url cant delete $e\n\n");
+      if (e is UnoError) {
+        throw Exception(MealClientError.cantSendData);
+      } else {
+        throw Exception(MealClientError.unknow);
+      }
+    }
   }
 
   @override
-  putMethod(String url, data,
-      {Map<String, String>? headers,
-      ResponseType? responseType,
-      bool ignoreResponse = true,
-      String exportKey = 'data'}) async {
+  putMethod(
+    String url,
+    data, {
+    Map<String, String>? headers,
+    ResponseType? responseType,
+    bool ignoreResponse = true,
+    String exportKey = 'data',
+  }) async {
     try {
       Response response = await retry<Response>(
         () async {
-          if (url.startsWith('http|https')) {
+          if (url.startsWith('http')) {
             ///recived full url
             return await initializer.customInit().put(
                   url,
@@ -178,10 +231,14 @@ class MealUnoApiClient extends MealUnoApiUtils implements IMealClient {
         maxAttempts: defaultRetryAmount,
       );
 
-      return _exportObjectData(response.data, exportKey);
+      if (!ignoreResponse) return _exportObjectData(response.data, exportKey);
     } catch (e) {
-      debugPrint("\n\n>>[MealClient] cant send PUT$e\n\n");
-      throw MealClientError.cantSendData;
+      debugPrint("\n\n>>[MealClient put] cant send PUT$e\n\n");
+      if (e is UnoError) {
+        throw Exception(MealClientError.cantSendData);
+      } else {
+        throw Exception(MealClientError.unknow);
+      }
     }
   }
 }

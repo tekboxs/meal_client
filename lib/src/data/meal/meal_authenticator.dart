@@ -23,10 +23,10 @@ class _MealAuthenticatorDataBase {
 
     await MealDataBase(boxName: 'clientBox').clear();
 
-    await MealClientDBAdapter().save(ClientKeys.baseUrl, baseUrlHolder);
-    await MealClientDBAdapter().save(ClientKeys.conta, accountHolder);
-    await MealClientDBAdapter().save(ClientKeys.usuario, userHolder);
-    await MealClientDBAdapter().save(ClientKeys.senha, passwordHolder);
+    await MealClientDBAdapter().saveMethod(ClientKeys.baseUrl, baseUrlHolder);
+    await MealClientDBAdapter().saveMethod(ClientKeys.conta, accountHolder);
+    await MealClientDBAdapter().saveMethod(ClientKeys.usuario, userHolder);
+    await MealClientDBAdapter().saveMethod(ClientKeys.senha, passwordHolder);
   }
 }
 
@@ -108,7 +108,7 @@ class MealAuthenticator {
           headers: {"Content-Type": "application/json"});
       String token = response.data['data']['accessToken'];
 
-      await MealClientDBAdapter().save(ClientKeys.token, token);
+      await MealClientDBAdapter().saveMethod(ClientKeys.token, token);
 
       debugPrint("[MealCli] >> new Token saved");
       return token;

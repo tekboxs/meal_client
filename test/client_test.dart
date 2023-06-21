@@ -14,6 +14,10 @@ class MealClientRepository {
     return await _client.getMethod('/estoque/produto');
   }
 
+  getProductsWithNoWorkMemory() async {
+    return await _client.getMethod('/estoque/produto', enableWorkMemory: false);
+  }
+
   getWithBaseUrl() async {
     return await _client.getMethod('$baseUrl/estoque/produto');
   }
@@ -41,14 +45,27 @@ void main() async {
     await setUpTestHive();
     await MealDataBase(boxName: 'clientBox').clear();
 
-    await MealClientDBAdapter().save(
+    await MealClientDBAdapter().saveMethod(
       ClientKeys.baseUrl,
       baseUrl,
+      ignoreWorkMemory: true,
     );
 
-    await MealClientDBAdapter().save(ClientKeys.usuario, user);
-    await MealClientDBAdapter().save(ClientKeys.conta, account);
-    await MealClientDBAdapter().save(ClientKeys.senha, password);
+    await MealClientDBAdapter().saveMethod(
+      ClientKeys.usuario,
+      user,
+      ignoreWorkMemory: true,
+    );
+    await MealClientDBAdapter().saveMethod(
+      ClientKeys.conta,
+      account,
+      ignoreWorkMemory: true,
+    );
+    await MealClientDBAdapter().saveMethod(
+      ClientKeys.senha,
+      password,
+      ignoreWorkMemory: true,
+    );
   });
 
   test('should return a Error', () async {
@@ -59,12 +76,29 @@ void main() async {
     final result = await repo.getProducts();
     expect(result, isList);
 
-    await MealClientDBAdapter().save(ClientKeys.usuario, 'fddas');
+    await MealClientDBAdapter().saveMethod(
+      ClientKeys.usuario,
+      'error',
+      ignoreWorkMemory: true,
+    );
     expectLater(
       () async => (await repo.getProducts()),
-      throwsA(isA<MealClientError>()),
+      throwsA(isA<Exception>()),
     );
   });
+  test('should do memoryRequest when avaliable', () async {
+    MealClientRepository repo = MealClientRepository(
+      MealUnoApiClient(initializer: initializer),
+    );
+
+    dynamic result1;
+    for (int i = 0; i < 300; i++) {
+      result1 = await repo.getProducts();
+    }
+
+    expect(result1, isList);
+  });
+
   test('should ignore initializer url', () async {
     MealClientRepository repo = MealClientRepository(
       MealUnoApiClient(initializer: initializer),
@@ -96,15 +130,31 @@ void main() async {
       MealUnoApiClient(initializer: initializer),
     );
 
-    await MealClientDBAdapter().save(ClientKeys.usuario, user);
-    await MealClientDBAdapter().save(ClientKeys.senha, password);
+    await MealClientDBAdapter().saveMethod(
+      ClientKeys.usuario,
+      user,
+      ignoreWorkMemory: true,
+    );
+    await MealClientDBAdapter().saveMethod(
+      ClientKeys.senha,
+      password,
+      ignoreWorkMemory: true,
+    );
 
     final result = await repo.getProducts();
 
     expect(result, isList);
 
-    await MealClientDBAdapter().save(ClientKeys.usuario, user2);
-    await MealClientDBAdapter().save(ClientKeys.senha, password2);
+    await MealClientDBAdapter().saveMethod(
+      ClientKeys.usuario,
+      user2,
+      ignoreWorkMemory: true,
+    );
+    await MealClientDBAdapter().saveMethod(
+      ClientKeys.senha,
+      password2,
+      ignoreWorkMemory: true,
+    );
 
     final result2 = await repo.getProducts();
 
