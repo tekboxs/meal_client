@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:meal_client/src/data/meal/meal_db_adapter.dart';
+import 'package:meal_client/src/data/memory/meal_db_adapter.dart';
 import 'package:retry/retry.dart';
 import 'package:uno/uno.dart';
 
@@ -33,7 +33,7 @@ class MealUnoApiClient extends MealUnoApiUtils implements IMealClient {
     ResponseType? responseType,
     String exportKey = 'data',
     bool disableCacheOnError = false,
-    bool enableWorkMemory = true,
+    bool enableWorkMemory = false,
   }) async {
     try {
       ///return data instead of request

@@ -6,7 +6,7 @@ abstract class IMealClient {
     Map<String, String>? headers,
     ResponseType? responseType,
     bool disableCacheOnError = false,
-    bool enableWorkMemory = true,
+    bool enableWorkMemory = false,
     String exportKey = 'data',
   });
   postMethod(

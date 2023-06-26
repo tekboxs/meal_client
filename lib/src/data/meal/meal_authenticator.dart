@@ -1,6 +1,5 @@
 // ignore_for_file: unused_element
 
-import 'package:db_commons/db_commons.dart';
 import 'package:flutter/material.dart';
 import 'package:jwt_decoder/jwt_decoder.dart';
 import 'package:meal_client/meal_client.dart';
@@ -9,24 +8,33 @@ import 'package:uno/uno.dart';
 class _MealAuthenticatorDataBase {
   ///access database with token key, may be null on fist access
   static Future<String?> _readDataBaseToken() async {
-    return await MealClientDBAdapter().read(ClientKeys.token);
+    return await MealClientDBAdapter().adapterReadMethod(ClientKeys.token);
   }
 
   ///remove only cache, keep configs like baseUrl
   static Future _removeUserDataBase() async {
     debugPrint("[MealCli] >> removing USER cache");
+    final memoryProvider = MealClientDBAdapter(
+      enableWorkMemory: false,
+      forceOverride: true,
+    );
 
-    final baseUrlHolder = await MealClientDBAdapter().read(ClientKeys.baseUrl);
-    final accountHolder = await MealClientDBAdapter().read(ClientKeys.conta);
-    final userHolder = await MealClientDBAdapter().read(ClientKeys.usuario);
-    final passwordHolder = await MealClientDBAdapter().read(ClientKeys.senha);
+    final baseUrlHolder =
+        await memoryProvider.adapterReadMethod(ClientKeys.baseUrl);
+    final accountHolder =
+        await memoryProvider.adapterReadMethod(ClientKeys.conta);
+    final userHolder =
+        await memoryProvider.adapterReadMethod(ClientKeys.usuario);
+    final passwordHolder =
+        await memoryProvider.adapterReadMethod(ClientKeys.senha);
 
-    await MealDataBase(boxName: 'clientBox').clear();
+    await memoryProvider.adapterClearLongTermMemory();
+    await memoryProvider.adapterClearWorkMemory();
 
-    await MealClientDBAdapter().saveMethod(ClientKeys.baseUrl, baseUrlHolder);
-    await MealClientDBAdapter().saveMethod(ClientKeys.conta, accountHolder);
-    await MealClientDBAdapter().saveMethod(ClientKeys.usuario, userHolder);
-    await MealClientDBAdapter().saveMethod(ClientKeys.senha, passwordHolder);
+    await memoryProvider.adapterSaveMethod(ClientKeys.baseUrl, baseUrlHolder);
+    await memoryProvider.adapterSaveMethod(ClientKeys.conta, accountHolder);
+    await memoryProvider.adapterSaveMethod(ClientKeys.usuario, userHolder);
+    await memoryProvider.adapterSaveMethod(ClientKeys.senha, passwordHolder);
   }
 }
 
@@ -39,10 +47,10 @@ class MealAuthenticator {
   ///Read DB to set auth fields
   ///should be used on [getToken] start
   _initFields() async {
-    baseUrl = await MealClientDBAdapter().read(ClientKeys.baseUrl);
-    usuario = await MealClientDBAdapter().read(ClientKeys.usuario);
-    senha = await MealClientDBAdapter().read(ClientKeys.senha);
-    conta = await MealClientDBAdapter().read(ClientKeys.conta);
+    baseUrl = await MealClientDBAdapter().adapterReadMethod(ClientKeys.baseUrl);
+    usuario = await MealClientDBAdapter().adapterReadMethod(ClientKeys.usuario);
+    senha = await MealClientDBAdapter().adapterReadMethod(ClientKeys.senha);
+    conta = await MealClientDBAdapter().adapterReadMethod(ClientKeys.conta);
   }
 
   ///return token used on auth and user identify
@@ -68,7 +76,8 @@ class MealAuthenticator {
     }
 
     debugPrint(
-        "[MealCli] >> 2 attemps done, USER CANT BE VALIDATED, closing...");
+      "[MealCli] >> 2 attemps done, USER CANT BE VALIDATED, closing...",
+    );
     return null;
   }
 
@@ -106,14 +115,15 @@ class MealAuthenticator {
       var response = await _client.post('$baseUrl/autenticar',
           data: {"usuario": usuario, "senha": senha, "conta": conta},
           headers: {"Content-Type": "application/json"});
+
       String token = response.data['data']['accessToken'];
 
-      await MealClientDBAdapter().saveMethod(ClientKeys.token, token);
+      await MealClientDBAdapter().adapterSaveMethod(ClientKeys.token, token);
 
       debugPrint("[MealCli] >> new Token saved");
       return token;
     } catch (e) {
-      throw "[MealCli] >>! CANT generate new token\n$e";
+      throw Exception("[MealCli] >>! CANT generate new token\n$e");
     }
   }
 }

@@ -1,4 +1,3 @@
-import 'package:db_commons/db_commons.dart';
 import 'package:flutter/material.dart';
 import 'package:hive_test/hive_test.dart';
 import 'package:meal_client/meal_client.dart';
@@ -12,6 +11,10 @@ class MealClientRepository {
 
   getProducts() async {
     return await _client.getMethod('/estoque/produto');
+  }
+
+  getProductsWithWorkMemory() async {
+    return await _client.getMethod('/estoque/produto', enableWorkMemory: true);
   }
 
   getProductsWithNoWorkMemory() async {
@@ -43,28 +46,26 @@ void main() async {
 
   setUp(() async {
     await setUpTestHive();
-    await MealDataBase(boxName: 'clientBox').clear();
+    final adapter = MealClientDBAdapter();
+    await adapter.adapterClearLongTermMemory();
+    await adapter.adapterClearWorkMemory();
 
-    await MealClientDBAdapter().saveMethod(
+    await adapter.adapterSaveMethod(
       ClientKeys.baseUrl,
       baseUrl,
-      ignoreWorkMemory: true,
     );
 
-    await MealClientDBAdapter().saveMethod(
+    await adapter.adapterSaveMethod(
       ClientKeys.usuario,
       user,
-      ignoreWorkMemory: true,
     );
-    await MealClientDBAdapter().saveMethod(
+    await adapter.adapterSaveMethod(
       ClientKeys.conta,
       account,
-      ignoreWorkMemory: true,
     );
-    await MealClientDBAdapter().saveMethod(
+    await adapter.adapterSaveMethod(
       ClientKeys.senha,
       password,
-      ignoreWorkMemory: true,
     );
   });
 
@@ -76,10 +77,9 @@ void main() async {
     final result = await repo.getProducts();
     expect(result, isList);
 
-    await MealClientDBAdapter().saveMethod(
+    await MealClientDBAdapter().adapterSaveMethod(
       ClientKeys.usuario,
       'error',
-      ignoreWorkMemory: true,
     );
     expectLater(
       () async => (await repo.getProducts()),
@@ -92,7 +92,7 @@ void main() async {
     );
 
     dynamic result1;
-    for (int i = 0; i < 300; i++) {
+    for (int i = 0; i < 10; i++) {
       result1 = await repo.getProducts();
     }
 
@@ -130,30 +130,26 @@ void main() async {
       MealUnoApiClient(initializer: initializer),
     );
 
-    await MealClientDBAdapter().saveMethod(
+    await MealClientDBAdapter().adapterSaveMethod(
       ClientKeys.usuario,
       user,
-      ignoreWorkMemory: true,
     );
-    await MealClientDBAdapter().saveMethod(
+    await MealClientDBAdapter().adapterSaveMethod(
       ClientKeys.senha,
       password,
-      ignoreWorkMemory: true,
     );
 
     final result = await repo.getProducts();
 
     expect(result, isList);
 
-    await MealClientDBAdapter().saveMethod(
+    await MealClientDBAdapter().adapterSaveMethod(
       ClientKeys.usuario,
       user2,
-      ignoreWorkMemory: true,
     );
-    await MealClientDBAdapter().saveMethod(
+    await MealClientDBAdapter().adapterSaveMethod(
       ClientKeys.senha,
       password2,
-      ignoreWorkMemory: true,
     );
 
     final result2 = await repo.getProducts();

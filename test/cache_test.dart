@@ -1,29 +1,32 @@
-import 'dart:io';
+import 'package:hive_test/hive_test.dart';
+import 'package:meal_client/src/data/memory/meal_db_adapter.dart';
 
-import 'package:flutter/cupertino.dart';
-import 'package:hive_flutter/hive_flutter.dart';
-import 'package:meal_client/src/data/meal/meal_db_adapter.dart';
-
-import 'package:path_provider/path_provider.dart';
 import 'package:test/test.dart';
 
 void main() async {
   final adapter = MealClientDBAdapter();
-  Directory dir = await getApplicationDocumentsDirectory();
-  await Hive.initFlutter(dir.path);
+  setUp(() async {
+    await setUpTestHive();
+  });
+
   test('should return MealDataBaseError', () async {
-    final result = await adapter.read('bolo');
-
-    expect(result, MealDataBaseError.notFound);
+    final data = await adapter.adapterReadMethod('bolo');
+    expect(data, isNull);
   });
 
-  test('should create a field sync', () async {
-    adapter.saveMethod('bolo1', 'fuba');
-    debugPrint('[MealCli] >>  keep execution');
+  test('should create a field', () async {
+    await adapter.adapterSaveMethod('bolo1', 'fuba');
   });
 
-  test('should read field', () async {
-    final result = await adapter.read('bolo1');
+  test('should create and read field', () async {
+    await adapter.adapterSaveMethod('bolo1', 'fuba');
+    final result = await adapter.adapterReadMethod('bolo1');
     expect(result, 'fuba');
+  });
+  test('should override a expired field', () async {
+    await adapter.adapterSaveMethod('bolo1', 'fuba');
+    await Future.delayed(const Duration(seconds: 8));
+    final data = await adapter.adapterReadMethod('bolo1');
+    expect(data, 'fuba');
   });
 }

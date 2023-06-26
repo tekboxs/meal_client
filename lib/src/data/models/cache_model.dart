@@ -27,4 +27,14 @@ class CacheModel {
 
   @override
   String toString() => json.encode(toMap());
+
+  CacheModel copyWith({
+    DateTime? creationDate,
+    dynamic value,
+  }) {
+    return CacheModel(
+      creationDate: creationDate ?? this.creationDate,
+      value: value ?? this.value,
+    );
+  }
 }

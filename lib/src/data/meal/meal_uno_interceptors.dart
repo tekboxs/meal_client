@@ -10,7 +10,7 @@ class MealUnoInterceptors {
   onResponse(Response response) {
     if (response.request.method == 'get') {
       //save on database in different thread
-      adapter.saveMethod(response.request.uri, response.data);
+      adapter.adapterSaveMethod(response.request.uri, response.data);
     }
     return response;
   }

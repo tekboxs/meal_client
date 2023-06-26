@@ -7,9 +7,9 @@ class MealUnoApiUtils {
   ///have a small duration, used to avoid multiple request
   ///in short times
   dynamic _handleWorkCache(String url) async {
-    final memoryItem = await adapter.read(
+    final adapter = MealClientDBAdapter(enableWorkMemory: true);
+    final memoryItem = await adapter.adapterReadMethod(
       Uri.parse(url),
-      ignoreWorkCache: false,
     );
 
     return memoryItem;
@@ -17,8 +17,9 @@ class MealUnoApiUtils {
 
   dynamic _handleCache(String? url) async {
     if (url == null) return null;
+    final adapter = MealClientDBAdapter();
 
-    return await adapter.read(Uri.parse(url), ignoreCache: false);
+    return await adapter.adapterReadMethod(Uri.parse(url));
   }
 
   dynamic _exportObjectData(dynamic object, String exportKey) {
