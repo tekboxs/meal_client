@@ -1,5 +1,5 @@
 import 'package:hive_test/hive_test.dart';
-import 'package:meal_client/src/data/memory/meal_db_adapter.dart';
+import 'package:meal_client/meal_client.dart';
 
 import 'package:test/test.dart';
 
@@ -28,5 +28,15 @@ void main() async {
     await Future.delayed(const Duration(seconds: 8));
     final data = await adapter.adapterReadMethod('bolo1');
     expect(data, 'fuba');
+  });
+  test('should return a value even if expired, for Config', () async {
+    await adapter.adapterSaveMethod('bolo1', 'fuba');
+    await adapter.adapterSaveMethod(ClientKeys.usuario, 'keep value');
+
+    await Future.delayed(const Duration(seconds: 2));
+    final data = await adapter.adapterReadMethod('bolo1');
+    expect(data, isNull);
+    final configData = await adapter.adapterReadMethod(ClientKeys.usuario);
+    expect(configData, 'keep value');
   });
 }

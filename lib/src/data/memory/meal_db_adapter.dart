@@ -21,7 +21,7 @@ class MealClientDBAdapter extends _LongTermMemory with _WorkMemory {
   Future<void> adapterSaveMethod(key, value) async {
     await maybeSaveOnWorkMemory(key, value, forceOverride: forceOverride);
     await saveOnLongTermMemory(key, value);
-    debugPrint("[saveMethod]>> $key saved");
+
     return;
   }
 
@@ -45,7 +45,7 @@ class MealClientDBAdapter extends _LongTermMemory with _WorkMemory {
   Future<void> adapterDeleteMethod(key) async {
     await deleteWorkMemory(key);
     await deleteLongTermMemory(key);
-    debugPrint("[deleteMethod]>>$key removed from DB");
+
     return;
   }
 
