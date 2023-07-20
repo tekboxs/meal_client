@@ -173,8 +173,8 @@ packages:
     dependency: "direct main"
     description:
       path: "."
-      ref: "1.1.1"
-      resolved-ref: "629984d117087f7cb013c6263fd7f937d518bfad"
+      ref: "1.1.2"
+      resolved-ref: "26a7d82bfe90d96a849e7a841cb5c777cfefa8c6"
       url: "https://github.com/tekboxs/db_commons.git"
     source: git
     version: "0.0.0"
