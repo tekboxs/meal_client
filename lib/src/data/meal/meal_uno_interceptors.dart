@@ -16,7 +16,8 @@ class MealUnoInterceptors {
   }
 
   onRequest(Request request) async {
-    if (request.headers.isEmpty && authenticator != null) {
+    if ((request.headers.isEmpty || request.method != 'get') &&
+        authenticator != null) {
       //delegate to client
       final token = await authenticator!.getToken();
       if (token == null) {

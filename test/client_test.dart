@@ -13,6 +13,10 @@ class MealClientRepository {
     return await _client.getMethod('/estoque/produto');
   }
 
+  postTest() async {
+    return await _client.postMethod('/estoque/produto', {});
+  }
+
   getProductsWithWorkMemory() async {
     return await _client.getMethod('/estoque/produto', enableWorkMemory: true);
   }
@@ -68,6 +72,22 @@ void main() async {
       password,
     );
   });
+  test(
+    'should get a new token',
+    () async {
+      MealClientRepository repo = MealClientRepository(
+        MealUnoApiClient(initializer: initializer),
+      );
+
+      await MealClientDBAdapter().adapterSaveMethod(
+        ClientKeys.token,
+        invalidToken,
+      );
+
+      final data = await repo.getProducts();
+      expect(data, isList);
+    },
+  );
 
   test('should return a Error', () async {
     MealClientRepository repo = MealClientRepository(

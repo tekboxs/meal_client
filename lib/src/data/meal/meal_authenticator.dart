@@ -11,6 +11,16 @@ class _MealAuthenticatorDataBase {
     return await MealClientDBAdapter().adapterReadMethod(ClientKeys.token);
   }
 
+  static Future<void> _removeInvalidToken() async {
+    debugPrint("[MealCli] >> removing invalid TOKEN");
+    final memoryProvider = MealClientDBAdapter(
+      enableWorkMemory: false,
+      forceOverride: true,
+    );
+    await memoryProvider.adapterDeleteMethod(ClientKeys.token);
+    return;
+  }
+
   ///remove only cache, keep configs like baseUrl
   static Future _removeUserDataBase() async {
     debugPrint("[MealCli] >> removing USER cache");
@@ -66,7 +76,11 @@ class MealAuthenticator {
       return null;
     }
 
-    if (await _isValidToken(token)) return token;
+    if (await _isValidToken(token)) {
+      return token;
+    } else {
+      await _MealAuthenticatorDataBase._removeInvalidToken();
+    }
 
     ///will try one more time to make sure that is not connection
     if (authAttemps == 0) {
