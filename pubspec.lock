@@ -157,10 +157,10 @@ packages:
     dependency: transitive
     description:
       name: cupertino_icons
-      sha256: e35129dc44c9118cee2a5603506d823bab99c68393879edb440e0090d07586be
+      sha256: d57953e10f9f8327ce64a508a355f0b1ec902193f66288e8cb5070e7c47eeb2d
       url: "https://pub.dev"
     source: hosted
-    version: "1.0.5"
+    version: "1.0.6"
   dart_style:
     dependency: transitive
     description:
@@ -174,7 +174,7 @@ packages:
     description:
       path: "."
       ref: "1.1.2"
-      resolved-ref: "26a7d82bfe90d96a849e7a841cb5c777cfefa8c6"
+      resolved-ref: "31bbe257b0304e7718668447fd859b282421fa03"
       url: "https://github.com/tekboxs/db_commons.git"
     source: git
     version: "0.0.0"
