@@ -2,14 +2,16 @@
 import 'dart:convert';
 
 class CacheModel {
-  final DateTime creationDate;
+  DateTime? creationDate;
   final dynamic value;
 
-  CacheModel({required this.creationDate, required this.value});
+  CacheModel({this.creationDate, required this.value}) {
+    creationDate ??= DateTime.now();
+  }
 
   Map<String, dynamic> toMap() {
     return <String, dynamic>{
-      'creationDate': creationDate.millisecondsSinceEpoch,
+      'creationDate': creationDate?.millisecondsSinceEpoch,
       'value': value,
     };
   }

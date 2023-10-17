@@ -3,7 +3,7 @@ description: client to handle all requests
 publish_to: none
 
 environment:
-  sdk: ">=2.18.4 <3.0.0"
+  sdk: ">=3.0.5 <4.0.0"
 
 dependencies:
   flutter:
@@ -18,13 +18,14 @@ dependencies:
       url: https://github.com/tekboxs/db_commons.git
       ref: 1.1.2
   logger: ^1.4.0
+  either_dart: ^1.0.0
 dev_dependencies:
   flutter_lints: ^2.0.0
   mockito: ^5.0.0
   firebase_auth: ^4.2.9
   firebase_core: ^2.7.0
   cloud_firestore: ^4.4.3
-  very_good_analysis: ^3.1.0
+  # very_good_analysis: ^3.1.0
   hive: ^2.2.3
   test: ^1.22.0
   hive_test: ^1.0.1
