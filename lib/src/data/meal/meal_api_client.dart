@@ -122,7 +122,7 @@ class MealUnoApiClient extends MealUnoApiUtils implements IMealClient {
     try {
       Response response = await retry<Response>(
         () async {
-          if (url.startsWith('http|https')) {
+          if (url.startsWith('http')) {
             ///recived full url
             return await initializer.customInit().post(
                   url,
