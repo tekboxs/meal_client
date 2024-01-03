@@ -1,6 +1,6 @@
 part of 'meal_db_adapter.dart';
 
-class _WorkMemory {
+mixin _WorkMemory {
   final MealDataBase workMemory = MealDataBase(boxName: 'workMemoryBox');
   static const _workMemoryDuration = Duration(minutes: 5);
 
@@ -39,7 +39,7 @@ class _WorkMemory {
         );
         await workMemory.writeMethod(
           key,
-          CacheModel(creationDate: DateTime.now(), value: value).toString(),
+          CacheModel(value: value).toString(),
         );
         return;
       }
@@ -57,14 +57,14 @@ class _WorkMemory {
           );
           await workMemory.writeMethod(
             key,
-            CacheModel(creationDate: DateTime.now(), value: value).toString(),
+            CacheModel(value: value).toString(),
           );
         }
       } else {
         debugPrint("[maybeSaveOnWorkMemory]>> $key is new, saved");
         await workMemory.writeMethod(
           key,
-          CacheModel(creationDate: DateTime.now(), value: value).toString(),
+          CacheModel(value: value).toString(),
         );
       }
     } catch (e) {

@@ -1,7 +1,9 @@
 part of 'meal_db_adapter.dart';
 
 class _LongTermMemory {
-  final MealDataBase longTermMemory = MealDataBase(boxName: 'clientBox');
+  final HiveSimpleService longTermMemory = HiveSimpleService(
+    boxName: 'clientBox',
+  );
   static const _longTermMemoryDuration = Duration(hours: 8);
   // static const _longTermMemoryDuration = Duration(seconds: 1);
 
@@ -46,7 +48,7 @@ class _LongTermMemory {
   Future<void> saveOnLongTermMemory(key, value) async {
     await longTermMemory.writeMethod(
       key,
-      CacheModel(creationDate: DateTime.now(), value: value).toString(),
+      CacheModel(value: value).toString(),
     );
     debugPrint("[saveOnLongTermMemory]>> $key saved");
   }

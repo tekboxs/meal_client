@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
+import 'package:get_it/get_it.dart';
 import 'package:hive_test/hive_test.dart';
 import 'package:meal_client/meal_client.dart';
+import 'package:meal_client/src/utils/string_to_endpoint.dart';
 import 'package:test/test.dart';
 import 'keys.dart';
 
@@ -8,6 +10,9 @@ class MealClientRepository {
   final IMealClient _client;
 
   MealClientRepository(this._client);
+  getProductsByString() async {
+    return await '/estoque/produto'.get();
+  }
 
   getProducts() async {
     return await _client.getMethod('/estoque/produto');
@@ -48,6 +53,22 @@ void main() async {
 
   final initializer = MealUnoInitializer(baseUrl, interceptors);
 
+  final getIt = GetIt.instance;
+
+  getIt.registerSingleton<MealAuthenticator>(
+    MealAuthenticator(),
+  );
+  getIt.registerSingleton<MealUnoInterceptors>(
+    MealUnoInterceptors(authenticator: getIt()),
+  );
+  getIt.registerSingletonAsync<MealUnoInitializer>(
+    () async => MealUnoInitializer(baseUrl, getIt()),
+  );
+  getIt.registerSingletonAsync<IMealClient>(
+    () async => MealUnoApiClient(initializer: getIt()),
+    dependsOn: [MealUnoInitializer],
+  );
+
   setUp(() async {
     await setUpTestHive();
     final adapter = MealClientDBAdapter();
@@ -85,6 +106,17 @@ void main() async {
       );
 
       final data = await repo.getProducts();
+      expect(data, isList);
+    },
+  );
+  test(
+    'should get products with string as endpoint',
+    () async {
+      MealClientRepository repo = MealClientRepository(
+        MealUnoApiClient(initializer: initializer),
+      );
+
+      final data = await repo.getProductsByString();
       expect(data, isList);
     },
   );

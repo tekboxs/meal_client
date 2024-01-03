@@ -2,24 +2,23 @@
 import 'dart:convert';
 
 class CacheModel {
-  DateTime? creationDate;
+  late DateTime creationDate;
   final dynamic value;
 
-  CacheModel({this.creationDate, required this.value}) {
-    creationDate ??= DateTime.now();
+  CacheModel({required this.value, DateTime? creation}) {
+    creationDate = creation ?? DateTime.now();
   }
 
   Map<String, dynamic> toMap() {
     return <String, dynamic>{
-      'creationDate': creationDate?.millisecondsSinceEpoch,
+      'creationDate': creationDate.millisecondsSinceEpoch,
       'value': value,
     };
   }
 
   factory CacheModel.fromMap(Map<String, dynamic> map) {
     return CacheModel(
-      creationDate:
-          DateTime.fromMillisecondsSinceEpoch(map['creationDate'] as int),
+      creation: DateTime.fromMillisecondsSinceEpoch(map['creationDate'] as int),
       value: map['value'] as dynamic,
     );
   }
@@ -35,7 +34,7 @@ class CacheModel {
     dynamic value,
   }) {
     return CacheModel(
-      creationDate: creationDate ?? this.creationDate,
+      creation: creationDate ?? this.creationDate,
       value: value ?? this.value,
     );
   }

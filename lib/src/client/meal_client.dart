@@ -100,7 +100,7 @@ class MealClient {
       final currentTime = DateTime.now();
       final maxDuration = isWorkMemory ? 5.minutes : 8.hours;
 
-      if (currentTime.difference(cacheData.creationDate!) <= maxDuration) {
+      if (currentTime.difference(cacheData.creationDate) <= maxDuration) {
         return cacheData.value;
       } else {
         await uri.memoryRemove;

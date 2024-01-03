@@ -19,6 +19,8 @@ dependencies:
       ref: 1.1.2
   logger: ^1.4.0
   either_dart: ^1.0.0
+  connectivity_plus: ^5.0.2
+  get_it: ^7.6.4
 dev_dependencies:
   flutter_lints: ^2.0.0
   mockito: ^5.0.0
