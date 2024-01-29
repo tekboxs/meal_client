@@ -1,5 +1,6 @@
 # Miscellaneous
 keys.dart
+/lib/src2/
 *.class
 *.log
 *.pyc
