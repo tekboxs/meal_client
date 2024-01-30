@@ -19,7 +19,7 @@ class MealHttpService implements HttpInterface {
     return MealResponseModel(
       status: response.statusCode,
       message: 'message',
-      data: response.data,
+      rawData: response.data,
     );
   }
 

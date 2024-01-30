@@ -2,8 +2,8 @@
 import 'package:meal_client/src/client/meal_auth_service.dart';
 import 'package:meal_client/src/client/meal_http_service.dart';
 import 'package:meal_client/src/client/meal_interceptors_service.dart';
-import 'package:meal_client/src/core/constants.dart';
 import 'package:meal_client/src/core/initialization_options.dart';
+import 'package:meal_client/src/core/model_conversor.dart';
 import 'package:meal_client/src/core/models/meal_response_model.dart';
 import 'package:meal_client/src/core/request_options.dart';
 
@@ -20,16 +20,45 @@ class MealClient {
     required this.options,
   });
 
+  MealResponseModel<T> _tryConvertBeforeReturn<T>(
+    MealResponseModel<T> mealResponse,
+  ) {
+    if (options.$binds.isNotEmpty) {
+      ModelConversor<T> conversor = ModelConversor<T>(options.$binds);
+      final rawData = mealResponse.rawData;
+
+      if (conversor.canConvert) {
+        if (rawData is List) {
+          final convertedData = rawData.map((e) => conversor.convert(e));
+
+          mealResponse = mealResponse.copyWith(
+            dataList: convertedData.toList(),
+          );
+
+          return mealResponse;
+        }
+
+        mealResponse = mealResponse.copyWith(
+          data: conversor.convert(mealResponse.rawData),
+        );
+
+        return mealResponse;
+      }
+    }
+    return mealResponse;
+  }
+
   Future<MealResponseModel<T>> getMethod<T>(
     String route, {
     MealRequestOptions? requestOptions,
   }) async {
-    if (options.$conversor != null) {}
+    requestOptions ??= MealRequestOptions();
 
-    return MealResponseModel(
-      status: KStatusEnum.ok.getStatus,
-      message: 'message',
-      data: {} as T,
+    MealResponseModel<T> mealResponse = await httpService.get(
+      route,
+      requestOptions,
     );
+
+    return _tryConvertBeforeReturn(mealResponse);
   }
 }

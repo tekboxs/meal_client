@@ -12,7 +12,4 @@ enum KStatusEnum {
 
   final int status;
   const KStatusEnum(this.status);
-
-  int get getStatus => status;
-  String get getStatusName => name;
 }

@@ -1,17 +1,21 @@
+// ignore_for_file: unused_local_variable
+
 import 'package:get_it/get_it.dart';
 import 'package:meal_client/src/client/meal_client.dart';
 import 'package:meal_client/src/core/models/meal_response_model.dart';
 import 'package:meal_client/src/core/request_options.dart';
 
-class X {}
+class Venda {}
 
 xo() async {
-  final x = await ''.get<X>();
-  x.data;
-  final y = await ''.get();
-  y.data;
-  final z = await ''.get<List<X>>();
-  z.data;
+  final x = await '/vendas/venda'.get<Venda>();
+  Venda? venda = x.data;
+
+  final y = await '/vendas_raw'.get();
+  dynamic vendasRaw = y.data;
+
+  final z = await '/vendas'.get<Venda>();
+  List<Venda>? vendas = z.dataList;
 }
 
 extension EndPoint on String {

@@ -3,11 +3,31 @@
 class MealResponseModel<T> {
   final int? status;
   final String message;
-  final T data;
+  final T? data;
+  final List<T>? dataList;
+  final dynamic rawData;
 
   MealResponseModel({
     required this.status,
     required this.message,
-    required this.data,
+    this.data,
+    this.dataList,
+    this.rawData,
   });
+
+  MealResponseModel<T> copyWith({
+    int? status,
+    String? message,
+    T? data,
+    List<T>? dataList,
+    dynamic rawData,
+  }) {
+    return MealResponseModel<T>(
+      status: status ?? this.status,
+      message: message ?? this.message,
+      data: data ?? this.data,
+      dataList: dataList ?? this.dataList,
+      rawData: rawData ?? this.rawData,
+    );
+  }
 }
