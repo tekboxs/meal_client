@@ -1,3 +1,5 @@
+typedef Json = Map<String, dynamic>;
+
 enum KStatusEnum {
   ok(200),
   connection(405),

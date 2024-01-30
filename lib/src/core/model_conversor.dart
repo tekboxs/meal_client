@@ -1,9 +1,19 @@
 // ignore_for_file: public_member_api_docs, sort_constructors_first
 
-class ModelConversor<T> {
-  T Function(Map<String, dynamic> item)? fromMap;
+import 'constants.dart';
 
-  List<T> call(rawData) {
-    return [];
+class ModelConversor<T> {
+  final Map<String, dynamic> _binds;
+
+  ModelConversor(this._binds);
+
+  T convert(Json rawMap) {
+    if (_binds[T.toString()] != null) {
+      return _binds[T.toString()]!.fromMap();
+    }
+
+    throw Exception(
+      '[ModelConversor]> _binds dont have ${T.toString()}\n $_binds',
+    );
   }
 }

@@ -1,15 +1,25 @@
-import 'package:logger/logger.dart';
+// ignore_for_file: public_member_api_docs, sort_constructors_first
+import 'package:meal_client/src/core/initialization_options.dart';
 
-final logger = Logger();
-ko() {
-  logger.d('message');
+class Fuba {
+  fo() => 'yey';
 }
 
-k2o() {
-  logger.w('message  2');
+class Test<T> {
+  final InitializationOptions options;
+  Test({
+    required this.options,
+  });
+
+  T get instance => options.result[T.toString()];
 }
 
 void main() {
-  ko();
-  k2o();
+  final options = InitializationOptions(
+    defaultExportDataKey: 'data',
+    objectBinds: [Fuba()],
+  );
+
+  final x = Test<Fuba>(options: options).instance.fo();
+  print(x);
 }
