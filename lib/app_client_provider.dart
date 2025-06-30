@@ -1,5 +1,6 @@
 import 'package:dio/dio.dart';
 import 'package:flutter/material.dart';
+import 'package:meal_client/client_keys.dart';
 
 class AppClientProvider {
   final Dio httpClient;
@@ -25,6 +26,7 @@ class AppClientProvider {
     Map<String, String>? headers,
     String exportKey = 'data',
     ResponseType? responseType,
+    bool disableAutoToken = false,
   }) async {
     try {
       Response? response;
@@ -33,7 +35,15 @@ class AppClientProvider {
         ///if informed with http means not default API
         response = await rawHttpClient.get(
           route,
-          options: Options(responseType: responseType),
+          options: Options(
+            headers: headers ??
+                (disableAutoToken
+                    ? {}
+                    : {
+                        'Authorization': await ClientKeys.token.read,
+                      }),
+            responseType: responseType,
+          ),
         );
       } else {
         ///base route configured in Dio instance
@@ -63,6 +73,7 @@ class AppClientProvider {
     String exportKey = 'data',
     bool ignoreResponse = true,
     ResponseType? responseType,
+    bool disableAutoToken = false,
   }) async {
     try {
       Response? response;
@@ -71,7 +82,14 @@ class AppClientProvider {
         response = await rawHttpClient.post(
           route,
           data: data,
-          options: Options(headers: headers, responseType: responseType),
+          options: Options(
+              headers: headers ??
+                  (disableAutoToken
+                      ? {}
+                      : {
+                          'Authorization': await ClientKeys.token.read,
+                        }),
+              responseType: responseType),
         );
       } else {
         response = await httpClient.post(
@@ -97,6 +115,7 @@ class AppClientProvider {
     ResponseType? responseType,
     bool ignoreResponse = true,
     String exportKey = 'data',
+    bool disableAutoToken = false,
   }) async {
     try {
       Response? response;
@@ -104,7 +123,14 @@ class AppClientProvider {
       if (route.startsWith('http')) {
         response = await rawHttpClient.delete(
           route,
-          options: Options(headers: headers, responseType: responseType),
+          options: Options(
+              headers: headers ??
+                  (disableAutoToken
+                      ? {}
+                      : {
+                          'Authorization': await ClientKeys.token.read,
+                        }),
+              responseType: responseType),
         );
       } else {
         response = await httpClient.delete(
@@ -130,6 +156,7 @@ class AppClientProvider {
     ResponseType? responseType,
     bool ignoreResponse = true,
     String exportKey = 'data',
+    bool disableAutoToken = false,
   }) async {
     try {
       Response? response;
@@ -138,7 +165,14 @@ class AppClientProvider {
         response = await rawHttpClient.put(
           route,
           data: data,
-          options: Options(headers: headers, responseType: responseType),
+          options: Options(
+              headers: headers ??
+                  (disableAutoToken
+                      ? {}
+                      : {
+                          'Authorization': await ClientKeys.token.read,
+                        }),
+              responseType: responseType),
         );
       } else {
         response = await httpClient.put(
